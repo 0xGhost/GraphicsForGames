@@ -14,9 +14,10 @@ int main() {
 		return -1;
 	}
 
-	float scale		= 100.0f;
-	float rotation	= 0.0f;
+	float scale = 100.0f;
+	float rotation = 0.0f;
 	Vector3 position(0, 0, -1500.0f);
+	float fov = 45.0f;
 
 	while(w.UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE)){
 		if(Window::GetKeyboard()->KeyDown(KEYBOARD_1)) 
@@ -49,6 +50,20 @@ int main() {
 		if(Window::GetKeyboard()->KeyDown(KEYBOARD_P))
 			position.z+= 1.0f;
 
+		if (Window::GetKeyboard()->KeyDown(KEYBOARD_Q))
+		{
+			fov -= 1.0f;
+			renderer.SetFov(fov);
+			renderer.SwitchToPerspective();
+		}
+		if (Window::GetKeyboard()->KeyDown(KEYBOARD_E))
+		{
+			fov += 1.0f;
+			renderer.SetFov(fov);
+			renderer.SwitchToPerspective();
+		}
+
+		
 		renderer.SetRotation(rotation);
 		renderer.SetScale(scale);
 		renderer.SetPosition(position);

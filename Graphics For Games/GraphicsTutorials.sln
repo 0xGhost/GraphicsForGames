@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26430.12
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29201.188
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Main Graphics Tutorials", "Main Graphics Tutorials", "{26FF1E94-61DD-4E24-A071-50FA11CAC038}"
 EndProject
@@ -169,5 +169,8 @@ Global
 		{5E5378FE-275C-4B32-935D-22E7A4AD5AA3} = {26FF1E94-61DD-4E24-A071-50FA11CAC038}
 		{55C75BC7-89C2-4B38-8118-CF8C26426E7A} = {26FF1E94-61DD-4E24-A071-50FA11CAC038}
 		{909A2CFC-6E55-4776-8B60-93B44103A9CF} = {B12FA29E-1613-4E55-9C1D-B7DCD8A760D8}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7621F3D3-B5CF-42E0-8443-A33E59BB86F9}
 	EndGlobalSection
 EndGlobal

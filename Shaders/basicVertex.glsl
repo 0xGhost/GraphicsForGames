@@ -5,7 +5,7 @@ in vec4 colour;
 
 out Vertex 
 {
-    vec4 colour;
+    noperspective  vec4 colour;
 } OUT;
 
 void main ( void ) 

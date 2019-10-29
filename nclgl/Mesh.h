@@ -13,7 +13,7 @@ public:
 	~Mesh();
 	virtual void Draw();
 	static Mesh* GenerateTriangle();
-
+	void *colorPtr;
 protected:
 	void BufferData();
 

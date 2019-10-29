@@ -21,6 +21,15 @@ Mesh::~Mesh()
 
 void Mesh::Draw()
 {
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObject[COLOUR_BUFFER]);
+#if 0
+	void* colorPtr = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+	for (int i = 0; i < numVertices; i++)
+	{
+		((Vector4*)colorPtr)[i] = Vector4((float)rand() / (float)RAND_MAX, (float)rand() / (float)RAND_MAX, (float)rand() / (float)RAND_MAX, 1.0f);
+	}
+	glUnmapBuffer(GL_ARRAY_BUFFER);
+#endif
 	glBindVertexArray(arrayObject);
 	glDrawArrays(type, 0, numVertices);
 	glBindVertexArray(0);
