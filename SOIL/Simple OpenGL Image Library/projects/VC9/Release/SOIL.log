@@ -1,0 +1,25 @@
+﻿Build started 28/05/2011 21:47:08.
+     1>Project "H:\Simple OpenGL Image Library\projects\VC9\SOIL.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Creating "Release\SOIL.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /O2 /Oy- /GL /D WIN32 /D NDEBUG /D _LIB /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TC /analyze- /errorReport:prompt ..\..\src\SOIL.c
+         SOIL.c
+     1>..\..\src\SOIL.c(1719): warning C4018: '<=' : signed/unsigned mismatch
+     1>..\..\src\SOIL.c(1729): warning C4018: '<' : signed/unsigned mismatch
+     1>..\..\src\SOIL.c(1841): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(234) : see declaration of 'fopen'
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\Lib.exe /OUT:"H:\Simple OpenGL Image Library\projects\VC9\Release\SOIL.lib" /NOLOGO /LTCG Release\image_DXT.obj
+         Release\image_helper.obj
+         Release\SOIL.obj
+         Release\stb_image_aug.obj
+         SOIL.vcxproj -> H:\Simple OpenGL Image Library\projects\VC9\Release\SOIL.lib
+       FinalizeBuildStatus:
+         Deleting file "Release\SOIL.unsuccessfulbuild".
+         Touching "Release\SOIL.lastbuildstate".
+     1>Done Building Project "H:\Simple OpenGL Image Library\projects\VC9\SOIL.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:01.69

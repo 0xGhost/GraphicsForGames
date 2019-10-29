@@ -1,0 +1,56 @@
+﻿Build started 31/10/2014 15:46:18.
+     1>Project "C:\Users\Rich\Desktop\MSc Graphics Week 2\Week 1 Source Original\SOIL\SLN\SOIL.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /O2 /Oy- /GL /D WIN32 /D NDEBUG /D _LIB /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TC /analyze- /errorReport:prompt "..\Simple OpenGL Image Library\src\image_DXT.c" "..\Simple OpenGL Image Library\src\image_helper.c" "..\Simple OpenGL Image Library\src\SOIL.c" "..\Simple OpenGL Image Library\src\stb_image_aug.c"
+         image_DXT.c
+     1>..\Simple OpenGL Image Library\src\image_DXT.c(92): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+         image_helper.c
+     1>..\Simple OpenGL Image Library\src\image_helper.c(325): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>..\Simple OpenGL Image Library\src\image_helper.c(366): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>..\Simple OpenGL Image Library\src\image_helper.c(373): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>..\Simple OpenGL Image Library\src\image_helper.c(415): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>..\Simple OpenGL Image Library\src\image_helper.c(422): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+         SOIL.c
+     1>..\Simple OpenGL Image Library\src\SOIL.c(1719): warning C4018: '<=' : signed/unsigned mismatch
+     1>..\Simple OpenGL Image Library\src\SOIL.c(1729): warning C4018: '<' : signed/unsigned mismatch
+     1>..\Simple OpenGL Image Library\src\SOIL.c(1841): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+         stb_image_aug.c
+     1>..\Simple OpenGL Image Library\src\stb_image_aug.c(177): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+     1>..\Simple OpenGL Image Library\src\stb_image_aug.c(251): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+     1>..\Simple OpenGL Image Library\src\stb_image_aug.c(303): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+     1>..\Simple OpenGL Image Library\src\stb_image_aug.c(1557): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+     1>..\Simple OpenGL Image Library\src\stb_image_aug.c(2394): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+     1>..\Simple OpenGL Image Library\src\stb_image_aug.c(2709): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+     1>..\Simple OpenGL Image Library\src\stb_image_aug.c(2995): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+     1>..\Simple OpenGL Image Library\src\stb_image_aug.c(3209): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+     1>..\Simple OpenGL Image Library\src\stb_image_aug.c(3548): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+     1>..\Simple OpenGL Image Library\src\stb_image_aug.c(3644): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+     1>c:\users\rich\desktop\msc graphics week 2\week 1 source original\soil\simple opengl image library\src\stbi_DDS_aug_c.h(362): warning C4018: '>' : signed/unsigned mismatch
+     1>c:\users\rich\desktop\msc graphics week 2\week 1 source original\soil\simple opengl image library\src\stbi_DDS_aug_c.h(366): warning C4018: '>' : signed/unsigned mismatch
+     1>c:\users\rich\desktop\msc graphics week 2\week 1 source original\soil\simple opengl image library\src\stbi_DDS_aug_c.h(390): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\rich\desktop\msc graphics week 2\week 1 source original\soil\simple opengl image library\src\stbi_DDS_aug_c.h(427): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\rich\desktop\msc graphics week 2\week 1 source original\soil\simple opengl image library\src\stbi_DDS_aug_c.h(498): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"C:\Users\Rich\Desktop\MSc Graphics Week 2\Week 1 Source Original\SOIL\SLN\Release\SOIL.lib" /NOLOGO /LTCG Release\image_DXT.obj
+         Release\image_helper.obj
+         Release\SOIL.obj
+         Release\stb_image_aug.obj
+         SOIL.vcxproj -> C:\Users\Rich\Desktop\MSc Graphics Week 2\Week 1 Source Original\SOIL\SLN\Release\SOIL.lib
+     1>Done Building Project "C:\Users\Rich\Desktop\MSc Graphics Week 2\Week 1 Source Original\SOIL\SLN\SOIL.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:01.11

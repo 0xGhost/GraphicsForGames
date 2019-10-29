@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="SOIL">
+</Property><Property Name="Solution File" Value="H:\GraphicsTutorials\Simple OpenGL Image Library\projects\VC9\SOIL.sln">
+</Property><Property Name="User Options File" Value="H:\GraphicsTutorials\Simple OpenGL Image Library\projects\VC9\SOIL.suo">
+</Property><Property Name="Date" Value="28 May 2011">
+</Property><Property Name="Time" Value="16:39">
+</Property></Properties><Event ErrorLevel="0" Project="" Source="SOIL.sln" Description="File successfully backed up as H:\GraphicsTutorials\Simple OpenGL Image Library\projects\VC9\SOIL.sln.old">
+</Event><Event ErrorLevel="0" Project="" Source="SOIL.suo" Description="File successfully backed up as H:\GraphicsTutorials\Simple OpenGL Image Library\projects\VC9\SOIL.suo.old">
+</Event><Event ErrorLevel="0" Project="SOIL" Source="SOIL.vcproj" Description="Converting project file 'H:\GraphicsTutorials\Simple OpenGL Image Library\projects\VC9\SOIL.vcproj'.">
+</Event><Event ErrorLevel="1" Project="SOIL" Source="SOIL.vcproj" Description="VCWebServiceProxyGeneratorTool is no longer supported. The tool has been removed from your project settings.">
+</Event><Event ErrorLevel="1" Project="SOIL" Source="SOIL.vcproj" Description="Attribute 'Detect64BitPortabilityProblems' of 'VCCLCompilerTool' is not supported in this version and has been removed during conversion.">
+</Event><Event ErrorLevel="1" Project="SOIL" Source="SOIL.vcproj" Description="Attribute 'Detect64BitPortabilityProblems' of 'VCCLCompilerTool' is not supported in this version and has been removed during conversion.">
+</Event><Event ErrorLevel="1" Project="SOIL" Source="SOIL.vcproj" Description="Attribute 'Detect64BitPortabilityProblems' of 'VCCLCompilerTool' is not supported in this version and has been removed during conversion.">
+</Event><Event ErrorLevel="1" Project="SOIL" Source="SOIL.vcproj" Description="Attribute 'Detect64BitPortabilityProblems' of 'VCCLCompilerTool' is not supported in this version and has been removed during conversion.">
+</Event><Event ErrorLevel="0" Project="SOIL" Source="SOIL.vcproj" Description="Done converting to new project file 'H:\GraphicsTutorials\Simple OpenGL Image Library\projects\VC9\SOIL.vcxproj'.">
+</Event><Event ErrorLevel="3" Project="SOIL" Source="SOIL.vcproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="" Source="SOIL.sln" Description="Solution converted successfully">
+</Event><Event ErrorLevel="3" Project="" Source="SOIL.sln" Description="Converted">
+</Event></UpgradeLog>

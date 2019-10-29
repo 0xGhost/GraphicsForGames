@@ -1,0 +1,57 @@
+﻿Build started 31/10/2014 15:46:26.
+     1>Project "C:\Users\Rich\Desktop\MSc Graphics Week 2\Week 1 Source Original\SOIL\SLN\SOIL.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TC /analyze- /errorReport:prompt "..\Simple OpenGL Image Library\src\image_DXT.c" "..\Simple OpenGL Image Library\src\image_helper.c" "..\Simple OpenGL Image Library\src\SOIL.c" "..\Simple OpenGL Image Library\src\stb_image_aug.c"
+         stb_image_aug.c
+     1>c:\users\rich\desktop\msc graphics week 2\week 1 source original\soil\simple opengl image library\src\stb_image_aug.c(177): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(211) : see declaration of 'fopen'
+     1>c:\users\rich\desktop\msc graphics week 2\week 1 source original\soil\simple opengl image library\src\stb_image_aug.c(251): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(211) : see declaration of 'fopen'
+     1>c:\users\rich\desktop\msc graphics week 2\week 1 source original\soil\simple opengl image library\src\stb_image_aug.c(303): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(211) : see declaration of 'fopen'
+     1>c:\users\rich\desktop\msc graphics week 2\week 1 source original\soil\simple opengl image library\src\stb_image_aug.c(1557): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(211) : see declaration of 'fopen'
+     1>c:\users\rich\desktop\msc graphics week 2\week 1 source original\soil\simple opengl image library\src\stb_image_aug.c(2394): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(211) : see declaration of 'fopen'
+     1>c:\users\rich\desktop\msc graphics week 2\week 1 source original\soil\simple opengl image library\src\stb_image_aug.c(2709): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(211) : see declaration of 'fopen'
+     1>c:\users\rich\desktop\msc graphics week 2\week 1 source original\soil\simple opengl image library\src\stb_image_aug.c(2995): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(211) : see declaration of 'fopen'
+     1>c:\users\rich\desktop\msc graphics week 2\week 1 source original\soil\simple opengl image library\src\stb_image_aug.c(3209): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(211) : see declaration of 'fopen'
+     1>c:\users\rich\desktop\msc graphics week 2\week 1 source original\soil\simple opengl image library\src\stb_image_aug.c(3548): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(211) : see declaration of 'fopen'
+     1>c:\users\rich\desktop\msc graphics week 2\week 1 source original\soil\simple opengl image library\src\stb_image_aug.c(3644): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(211) : see declaration of 'fopen'
+     1>c:\users\rich\desktop\msc graphics week 2\week 1 source original\soil\simple opengl image library\src\stbi_dds_aug_c.h(362): warning C4018: '>' : signed/unsigned mismatch
+     1>c:\users\rich\desktop\msc graphics week 2\week 1 source original\soil\simple opengl image library\src\stbi_dds_aug_c.h(366): warning C4018: '>' : signed/unsigned mismatch
+     1>c:\users\rich\desktop\msc graphics week 2\week 1 source original\soil\simple opengl image library\src\stbi_dds_aug_c.h(390): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\rich\desktop\msc graphics week 2\week 1 source original\soil\simple opengl image library\src\stbi_dds_aug_c.h(427): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\rich\desktop\msc graphics week 2\week 1 source original\soil\simple opengl image library\src\stbi_dds_aug_c.h(498): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(211) : see declaration of 'fopen'
+         SOIL.c
+     1>c:\users\rich\desktop\msc graphics week 2\week 1 source original\soil\simple opengl image library\src\soil.c(1719): warning C4018: '<=' : signed/unsigned mismatch
+     1>c:\users\rich\desktop\msc graphics week 2\week 1 source original\soil\simple opengl image library\src\soil.c(1729): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\rich\desktop\msc graphics week 2\week 1 source original\soil\simple opengl image library\src\soil.c(1841): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(211) : see declaration of 'fopen'
+         image_helper.c
+     1>c:\users\rich\desktop\msc graphics week 2\week 1 source original\soil\simple opengl image library\src\image_helper.c(325): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\rich\desktop\msc graphics week 2\week 1 source original\soil\simple opengl image library\src\image_helper.c(366): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\rich\desktop\msc graphics week 2\week 1 source original\soil\simple opengl image library\src\image_helper.c(373): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\rich\desktop\msc graphics week 2\week 1 source original\soil\simple opengl image library\src\image_helper.c(415): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\rich\desktop\msc graphics week 2\week 1 source original\soil\simple opengl image library\src\image_helper.c(422): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+         image_DXT.c
+     1>c:\users\rich\desktop\msc graphics week 2\week 1 source original\soil\simple opengl image library\src\image_dxt.c(92): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(211) : see declaration of 'fopen'
+         Generating Code...
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"C:\Users\Rich\Desktop\MSc Graphics Week 2\Week 1 Source Original\SOIL\SLN\Debug\SOIL.lib" /NOLOGO Debug\image_DXT.obj
+         Debug\image_helper.obj
+         Debug\SOIL.obj
+         Debug\stb_image_aug.obj
+         SOIL.vcxproj -> C:\Users\Rich\Desktop\MSc Graphics Week 2\Week 1 Source Original\SOIL\SLN\Debug\SOIL.lib
+     1>Done Building Project "C:\Users\Rich\Desktop\MSc Graphics Week 2\Week 1 Source Original\SOIL\SLN\SOIL.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.73
