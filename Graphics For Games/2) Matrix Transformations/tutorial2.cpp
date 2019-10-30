@@ -14,6 +14,8 @@ int main() {
 		return -1;
 	}
 
+	renderer.SetCamera(new Camera(0.0f, 0.0f, Vector3(0.0f, 0.0f, 0.0f), 1.2f, 0.8f));
+
 	float scale = 100.0f;
 	float rotation = 0.0f;
 	Vector3 position(0, 0, -1500.0f);
@@ -50,13 +52,13 @@ int main() {
 		if(Window::GetKeyboard()->KeyDown(KEYBOARD_P))
 			position.z+= 1.0f;
 
-		if (Window::GetKeyboard()->KeyDown(KEYBOARD_Q))
+		if (Window::GetKeyboard()->KeyDown(KEYBOARD_3))
 		{
 			fov -= 1.0f;
 			renderer.SetFov(fov);
 			renderer.SwitchToPerspective();
 		}
-		if (Window::GetKeyboard()->KeyDown(KEYBOARD_E))
+		if (Window::GetKeyboard()->KeyDown(KEYBOARD_4))
 		{
 			fov += 1.0f;
 			renderer.SetFov(fov);
@@ -67,6 +69,7 @@ int main() {
 		renderer.SetRotation(rotation);
 		renderer.SetScale(scale);
 		renderer.SetPosition(position);
+		renderer.UpdateScene(w.GetTimer()->GetTimedMS()/10.0f);
 		renderer.RenderScene();
 	}
 

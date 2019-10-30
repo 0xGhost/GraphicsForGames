@@ -18,6 +18,7 @@ public:
 	inline void SetRotation(float r) { rotation = r; }
 	inline void SetPosition(Vector3 p) { position = p; }
 	inline void SetFov(float f) { fov = f; }
+	inline void SetCamera(Camera* c) { camera = c; }
 
 protected:
 	Mesh* triangle;

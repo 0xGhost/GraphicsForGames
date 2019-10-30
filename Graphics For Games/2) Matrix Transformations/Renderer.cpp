@@ -20,6 +20,7 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent), fov(45.0f)
 Renderer ::~Renderer(void)
 {
 	delete triangle;
+	delete camera;
 }
 
 void Renderer::SwitchToPerspective()
@@ -43,11 +44,11 @@ void Renderer::RenderScene() {
 
 	glUseProgram(currentShader->GetProgram());
 
-	glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram()
-		, "projMatrix"), 1, false, (float*)& projMatrix);
+	//glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram()
+	//	, "projMatrix"), 1, false, (float*)& projMatrix);
 
-	glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram()
-		, "viewMatrix"), 1, false, (float*)& viewMatrix);
+	//glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram()
+	//	, "viewMatrix"), 1, false, (float*)& viewMatrix);
 
 	for (int i = 0; i < 3; ++i) 
 	{
@@ -55,14 +56,20 @@ void Renderer::RenderScene() {
 		tempPos.z += (i * 500.0f);
 		tempPos.x -= (i * 100.0f);
 		tempPos.y -= (i * 100.0f);
-
+#if 1
 		modelMatrix = Matrix4::Translation(tempPos) *
 			Matrix4::Rotation(rotation, Vector3(0, 1, 0)) *
 			Matrix4::Scale(Vector3(scale, scale, scale));
-
-		glUniformMatrix4fv(glGetUniformLocation(
-			currentShader->GetProgram(), "modelMatrix"), 1, false,
-			(float*)& modelMatrix);
+#else
+		modelMatrix = 
+			Matrix4::Scale(Vector3(scale, scale, scale)) *
+			Matrix4::Rotation(rotation, Vector3(0, 1, 0)) *
+			Matrix4::Translation(tempPos);
+#endif
+		//glUniformMatrix4fv(glGetUniformLocation(
+		//	currentShader->GetProgram(), "modelMatrix"), 1, false,
+		//	(float*)& modelMatrix);
+		UpdateShaderMatrices();
 		triangle->Draw();
 
 	}
