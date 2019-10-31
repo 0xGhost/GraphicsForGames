@@ -1,2 +1,2 @@
 ﻿  Tutorial7.cpp
-H:\Downloads\Graphic\Download\nclgl\OGLRenderer.h(36,10): error C1083:  Cannot open include file: 'Shader.h': No such file or directory
+H:\Downloads\Graphic\Download\Graphics For Games\7) Scene Management\Tutorial7.cpp(2,10): error C1083:  Cannot open include file: 'Renderer.h': No such file or directory

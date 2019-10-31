@@ -3,7 +3,7 @@
 
 enum MeshBuffer
 {
-	VERTEX_BUFFER, COLOUR_BUFFER, MAX_BUFFER
+	VERTEX_BUFFER, COLOUR_BUFFER, TEXTURE_BUFFER, MAX_BUFFER
 };
 
 class Mesh
@@ -14,6 +14,9 @@ public:
 	virtual void Draw();
 	static Mesh* GenerateTriangle();
 	void *colorPtr;
+	void SetTexture(GLuint tex) { texture = tex; }
+	GLuint GetTexture() { return texture; }
+
 protected:
 	void BufferData();
 
@@ -22,6 +25,8 @@ protected:
 	GLuint numVertices;
 	GLuint type;
 
+	GLuint texture;
+	Vector2* textureCoords;
 	Vector3* vertices;
 	Vector4* colours;
 

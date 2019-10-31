@@ -1,2 +1,2 @@
 ﻿  tutorial5.cpp
-H:\Downloads\Graphic\Download\nclGL\OGLRenderer.h(36,10): error C1083:  Cannot open include file: 'Shader.h': No such file or directory
+H:\Downloads\Graphic\Download\Graphics For Games\5) Stencils & Scissors\tutorial5.cpp(2,10): error C1083:  Cannot open include file: 'Renderer.h': No such file or directory
