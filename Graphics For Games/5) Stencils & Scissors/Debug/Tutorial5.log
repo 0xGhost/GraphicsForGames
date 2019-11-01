@@ -1,2 +1,6 @@
-﻿  tutorial5.cpp
-H:\Downloads\Graphic\Download\Graphics For Games\5) Stencils & Scissors\tutorial5.cpp(2,10): error C1083:  Cannot open include file: 'Renderer.h': No such file or directory
+﻿  Renderer.cpp
+C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\5) Stencils & Scissors\Renderer.cpp(37,91): warning C4244:  'argument': conversion from 'float' to 'GLsizei', possible loss of data
+C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\5) Stencils & Scissors\Renderer.cpp(37,69): warning C4244:  'argument': conversion from 'float' to 'GLsizei', possible loss of data
+C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\5) Stencils & Scissors\Renderer.cpp(37,48): warning C4244:  'argument': conversion from 'float' to 'GLint', possible loss of data
+C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\5) Stencils & Scissors\Renderer.cpp(37,26): warning C4244:  'argument': conversion from 'float' to 'GLint', possible loss of data
+  Tutorial5.vcxproj -> C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Debug\Tutorial 05 - Scissors and Stencils.exe

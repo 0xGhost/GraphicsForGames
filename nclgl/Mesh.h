@@ -13,6 +13,7 @@ public:
 	~Mesh();
 	virtual void Draw();
 	static Mesh* GenerateTriangle();
+	static Mesh* GenerateQuad();
 	void *colorPtr;
 	void SetTexture(GLuint tex) { texture = tex; }
 	GLuint GetTexture() { return texture; }
