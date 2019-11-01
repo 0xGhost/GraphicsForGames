@@ -1,5 +1,5 @@
 #pragma once
-#include "H:\Downloads\Graphic\Download\nclgl\OGLRenderer.h"
+#include "../nclgl/OGLRenderer.h"
 #include "../nclgl/Camera.h"
 
 class Renderer :

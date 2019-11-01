@@ -1,2 +1,8 @@
 ﻿  Renderer.cpp
-  Tutorial3.vcxproj -> H:\Downloads\Graphic\Download\Graphics For Games\Debug\Tutorial 03 - Texturing.exe
+  tutorial3.cpp
+  Generating Code...
+LINK : warning LNK4286: symbol '___glewGetUniformLocation' defined in 'glew32.lib(glew.obj)' is imported by 'Renderer.obj'
+LINK : warning LNK4286: symbol '___glewUniform1f' defined in 'glew32.lib(glew.obj)' is imported by 'Renderer.obj'
+LINK : warning LNK4286: symbol '___glewUniform1i' defined in 'glew32.lib(glew.obj)' is imported by 'Renderer.obj'
+LINK : warning LNK4286: symbol '___glewUseProgram' defined in 'glew32.lib(glew.obj)' is imported by 'Renderer.obj'
+  Tutorial3.vcxproj -> C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Debug\Tutorial 03 - Texturing.exe
