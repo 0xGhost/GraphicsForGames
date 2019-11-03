@@ -1,1 +1,11 @@
-﻿  Tutorial4.vcxproj -> C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Debug\Tutorial 04 - Depth and Transparency.exe
+﻿  Renderer.cpp
+  tutorial4.cpp
+  Generating Code...
+C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\4) Depth & Transparency\Renderer.cpp(32,17): warning C4154:  deletion of an array expression; conversion to pointer supplied
+LINK : warning LNK4286: symbol '___glewActiveTexture' defined in 'glew32.lib(glew.obj)' is imported by 'Renderer.obj'
+LINK : warning LNK4286: symbol '___glewGetUniformLocation' defined in 'glew32.lib(glew.obj)' is imported by 'Renderer.obj'
+LINK : warning LNK4286: symbol '___glewUniform1i' defined in 'glew32.lib(glew.obj)' is imported by 'Renderer.obj'
+LINK : warning LNK4286: symbol '___glewUniformMatrix4fv' defined in 'glew32.lib(glew.obj)' is imported by 'Renderer.obj'
+LINK : warning LNK4286: symbol '___glewUseProgram' defined in 'glew32.lib(glew.obj)' is imported by 'Renderer.obj'
+glew32.lib(glew.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'glew32.lib(glew.obj)' or at 'C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Debug\vc120.pdb'; linking object as if no debug info
+  Tutorial4.vcxproj -> C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Debug\Tutorial 04 - Depth and Transparency.exe

@@ -1,2 +1,18 @@
-﻿  Shader.cpp
+﻿  Camera.cpp
+  GameTimer.cpp
+  Keyboard.cpp
+  Matrix4.cpp
+  MD5Anim.cpp
+  MD5FileData.cpp
+  MD5Mesh.cpp
+  MD5Node.cpp
+  Mesh.cpp
+  Mouse.cpp
+  OBJMesh.cpp
+  OGLRenderer.cpp
+  Quaternion.cpp
+  SceneNode.cpp
+  Shader.cpp
+  Window.cpp
+  Generating Code...
   nclgl.vcxproj -> C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Debug\nclgl.lib

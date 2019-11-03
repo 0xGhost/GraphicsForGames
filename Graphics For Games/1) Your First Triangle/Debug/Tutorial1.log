@@ -1,7 +1,5 @@
 ﻿  Renderer.cpp
   tutorial1.cpp
   Generating Code...
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppCommon.targets(725,5): warning MSB4220: Waiting for the currently executing task "Link" to cancel.
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppCommon.targets(725,5): warning MSB4220: Waiting for the currently executing task "Link" to cancel.
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppCommon.targets(725,5): warning MSB4220: Waiting for the currently executing task "Link" to cancel.
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppCommon.targets(725,5): error MSB6006: "link.exe" exited with code 1.
+LINK : warning LNK4286: symbol '___glewUseProgram' defined in 'glew32.lib(glew.obj)' is imported by 'Renderer.obj'
+  Tutorial1.vcxproj -> C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Debug\Tutorial 01 - Your First Triangle.exe

@@ -12,7 +12,7 @@ _-_-_-_-_-_-_-""  ""
 
 #pragma once
 
-//#define WEEK_2_CODE
+#define WEEK_2_CODE
 //#define WEEK_3_CODE
 
 /*

@@ -1,9 +1,9 @@
 ﻿  Renderer.cpp
   Tutorial9.cpp
-H:\Downloads\Graphic\Download\Graphics For Games\9) Skeletal Animation\Tutorial9.cpp(12,2): error C2065:  'Renderer': undeclared identifier
-H:\Downloads\Graphic\Download\Graphics For Games\9) Skeletal Animation\Tutorial9.cpp(12,11): error C2146:  syntax error: missing ';' before identifier 'renderer'
-H:\Downloads\Graphic\Download\Graphics For Games\9) Skeletal Animation\Tutorial9.cpp(12,11): error C3861:  'renderer': identifier not found
-H:\Downloads\Graphic\Download\Graphics For Games\9) Skeletal Animation\Tutorial9.cpp(13,6): error C2065:  'renderer': undeclared identifier
-H:\Downloads\Graphic\Download\Graphics For Games\9) Skeletal Animation\Tutorial9.cpp(21,3): error C2065:  'renderer': undeclared identifier
+C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\9) Skeletal Animation\Renderer.h(18,13): error C2143:  syntax error: missing ';' before '*'
+C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\9) Skeletal Animation\Renderer.h(18,13): error C4430:  missing type specifier - int assumed. Note: C++ does not support default-int
+C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\9) Skeletal Animation\Renderer.h(18,22): error C2238:  unexpected token(s) preceding ';'
+C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\9) Skeletal Animation\Renderer.h(19,9): error C2143:  syntax error: missing ';' before '*'
+C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\9) Skeletal Animation\Renderer.h(19,9): error C4430:  missing type specifier - int assumed. Note: C++ does not support default-int
   Generating Code...
-H:\Downloads\Graphic\Download\Graphics For Games\9) Skeletal Animation\Tutorial9.cpp(22,3): error C2065:  'renderer': undeclared identifier
+C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\9) Skeletal Animation\Renderer.h(19,19): error C2238:  unexpected token(s) preceding ';'
