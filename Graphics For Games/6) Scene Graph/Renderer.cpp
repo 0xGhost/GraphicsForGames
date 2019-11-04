@@ -34,11 +34,8 @@ void Renderer::UpdateScene(float msec)
 void Renderer::RenderScene()
 {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
-	glUseProgram(currentShader->GetProgram());
-
 	UpdateShaderMatrices();
-	glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "diffuseTex"), 1);
+	
 
 	DrawNode(root);
 	glUseProgram(0);
@@ -46,13 +43,16 @@ void Renderer::RenderScene()
 }
 
 void Renderer::DrawNode(SceneNode* n)
-{
+{	
 	if (n->GetMesh())
 	{
+		Shader* nodeShader = n->GetShader() != NULL ? n->GetShader() : currentShader;
+		glUseProgram(nodeShader->GetProgram());
+		glUniform1i(glGetUniformLocation(nodeShader->GetProgram(), "diffuseTex"), 1);
 		Matrix4 transform = n->GetWorldTransform() * Matrix4::Scale(n->GetModelScale());
-		glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "modelMatrix"), 1, false, (float*)& transform);
-		glUniform4fv(glGetUniformLocation(currentShader->GetProgram(), "nodeColour"), 1, (float*)&n->GetColour());
-		glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "useTexture"), (int)n->GetMesh()->GetTexture());
+		glUniformMatrix4fv(glGetUniformLocation(nodeShader->GetProgram(), "modelMatrix"), 1, false, (float*)& transform);
+		glUniform4fv(glGetUniformLocation(nodeShader->GetProgram(), "nodeColour"), 1, (float*)&n->GetColour());
+		glUniform1i(glGetUniformLocation(nodeShader->GetProgram(), "useTexture"), (int)n->GetMesh()->GetTexture());
 		n->Draw(*this);
 	}
 	for (vector<SceneNode*>::const_iterator i = n->GetChildIteratorStart(); i != n->GetChildIteratorEnd(); ++i) 

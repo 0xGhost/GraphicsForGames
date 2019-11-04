@@ -53,7 +53,7 @@ void Camera::UpdateCamera(float msec)
 	{
 		position.y += moveDelta;
 	}
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_CONTROL)) 
+	if (Window::GetKeyboard()->KeyDown(KEYBOARD_SHIFT)) 
 	{
 		position.y -= moveDelta;
 	}
@@ -68,8 +68,8 @@ Matrix4 Camera::BuildViewMatrix() {
 	//using the negative values ;). The matrix multiplication order is important!
 
 	return
-		Matrix4::Rotation(-yaw, Vector3(0, 1, 0)) *
 		Matrix4::Rotation(-pitch, Vector3(1, 0, 0)) *
+		Matrix4::Rotation(-yaw, Vector3(0, 1, 0)) *
 		Matrix4::Translation(-position);
 		//Matrix4::Scale(Vector3(10.0f,2.0f,5.0f));
 };

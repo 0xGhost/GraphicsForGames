@@ -99,7 +99,8 @@ Mesh* Mesh::GenerateQuad()
 	}
 
 	m->BufferData();
-	return m;
+	return m;
+
 }
 
 void Mesh::BufferData()

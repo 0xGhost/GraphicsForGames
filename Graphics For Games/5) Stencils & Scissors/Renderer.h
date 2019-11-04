@@ -18,6 +18,7 @@ protected:
 	Mesh* quad;
 
 	bool usingScissor;
-	bool usingStencil;
+	bool usingStencil;
+
 };
 

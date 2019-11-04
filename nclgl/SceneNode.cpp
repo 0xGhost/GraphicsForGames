@@ -1,5 +1,13 @@
 #include "SceneNode.h"
 
+SceneNode::SceneNode(Mesh* m, Vector4 colour, Shader* s, GLuint t) 
+	: mesh(m), shader(s), texture(t), colour(colour), parent(NULL), modelScale(Vector3(1, 1, 1))
+{
+	//if (t) mesh->SetTexture(t);
+	boundingRadius = 1.0f;
+	distanceFromCamera = 0.0f;
+}
+
 SceneNode::~SceneNode(void)
 {
 	for (size_t i = 0; i < children.size(); i++)
@@ -10,8 +18,15 @@ SceneNode::~SceneNode(void)
 
 void SceneNode::AddChild(SceneNode* s)
 {
+	if (s == this) return;
 	children.push_back(s);
 	s->parent = this;
+}
+
+void SceneNode::DeleteChild(size_t index)
+{
+	delete children[index];
+	children.erase(children.begin() + index);
 }
 
 void SceneNode::Update(float msec)
