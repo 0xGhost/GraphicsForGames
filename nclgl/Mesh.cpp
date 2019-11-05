@@ -4,12 +4,14 @@ Mesh::Mesh()
 {
 	memset(bufferObject, 0, MAX_BUFFER * sizeof(GLuint));
 	glGenVertexArrays(1, &arrayObject);
+	indices = NULL;
+	numIndices = 0;
 	texture = 0;
 	textureCoords = nullptr;
 	numVertices = 0;
 	vertices = nullptr;
 	colours = nullptr;
-	type = GL_TRIANGLE_FAN;
+	type = GL_TRIANGLES;
 }
 
 Mesh::~Mesh()
@@ -20,6 +22,7 @@ Mesh::~Mesh()
 	delete[] textureCoords;
 	delete[] vertices;
 	delete[] colours;
+	delete[] indices;
 }
 
 void Mesh::Draw()
@@ -35,7 +38,15 @@ void Mesh::Draw()
 	glUnmapBuffer(GL_ARRAY_BUFFER);
 #endif
 	glBindVertexArray(arrayObject);
-	glDrawArrays(type, 0, numVertices);
+	if (bufferObject[INDEX_BUFFER]) 
+	{
+		glDrawElements(type, numIndices, GL_UNSIGNED_INT, 0);
+	}
+	else
+	{
+		glDrawArrays(type, 0, numVertices);
+	}
+
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
@@ -103,19 +114,21 @@ Mesh* Mesh::GenerateQuad()
 
 }
 
+
+
 void Mesh::BufferData()
 {
 	glBindVertexArray(arrayObject);
 	glGenBuffers(1, &bufferObject[VERTEX_BUFFER]);
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObject[VERTEX_BUFFER]);
-	glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(Vector3), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(Vector3), vertices, GL_DYNAMIC_DRAW);
 	glVertexAttribPointer(VERTEX_BUFFER, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(VERTEX_BUFFER);
 	if (textureCoords)
 	{
 		glGenBuffers(1, &bufferObject[TEXTURE_BUFFER]);
 		glBindBuffer(GL_ARRAY_BUFFER, bufferObject[TEXTURE_BUFFER]);
-		glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(Vector2), textureCoords, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(Vector2), textureCoords, GL_DYNAMIC_DRAW);
 		glVertexAttribPointer(TEXTURE_BUFFER, 2, GL_FLOAT, GL_FALSE, 0, 0);
 		glEnableVertexAttribArray(TEXTURE_BUFFER);
 	}
@@ -124,10 +137,18 @@ void Mesh::BufferData()
 	{
 		glGenBuffers(1, &bufferObject[COLOUR_BUFFER]);
 		glBindBuffer(GL_ARRAY_BUFFER, bufferObject[COLOUR_BUFFER]);
-		glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(Vector4), colours, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(Vector4), colours, GL_DYNAMIC_DRAW);
 		glVertexAttribPointer(COLOUR_BUFFER, 4, GL_FLOAT, GL_FALSE, 0, 0);
 		glEnableVertexAttribArray(COLOUR_BUFFER);
 	}
+
+	if (indices) 
+	{
+		glGenBuffers(1, &bufferObject[INDEX_BUFFER]);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObject[INDEX_BUFFER]);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices * sizeof(GLuint), indices, GL_STATIC_DRAW);
+	}
+
 	glBindVertexArray(0);
 }
 

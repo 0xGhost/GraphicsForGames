@@ -1,20 +1,23 @@
 #pragma once
 #include "Plane.h"
+#include "Matrix4.h"
 
 class BoundingVolume
 {
 public:
- 	BoundingVolume(Vector3 c) : centrePosition(c) {};
+ 	//BoundingVolume(Vector3 c) : centrePosition(c) {};
+	BoundingVolume(Matrix4 t, Vector3 oS) : transform(t), originScale(oS) {};
 
 	virtual bool IsInPlane(Plane p) const = 0;
-	virtual void ExtendVolume(BoundingVolume* childBoundingVolume) = 0;
+	virtual void ExpendVolume(BoundingVolume* childBoundingVolume) = 0;
 	virtual Vector3 GetMaxDistancePointFromPosition(Vector3 position) const = 0;
+	virtual void Update(Matrix4 newTrans) { transform = newTrans; } // with Scale
+	//void SetCentrePosition(Vector3 newPosition) { centrePosition = newPosition; }
+	//void SetTransform(Matrix4 newTrans) { transform = newTrans; }
 
-	void SetCentrePosition(Vector3 newPosition) { centrePosition = newPosition; }
 protected:
-
-	
-	Vector3 centrePosition;
-
+	//Vector3 centrePosition;
+	Matrix4 transform;
+	const Vector3 originScale;
 };
 

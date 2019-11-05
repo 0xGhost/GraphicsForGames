@@ -4,12 +4,10 @@ class AABoundingBox :
 	public BoundingBox
 {
 public:
-	AABoundingBox(Vector3 c, Vector3 minCor, Vector3 maxCor) : BoundingBox(c), minCorner(minCor), maxCorner(maxCor) {}
-	virtual bool IsInPlane(Plane p) const;
-	virtual void ExtendVolume(BoundingVolume* childBoundingVolume) override;
+	AABoundingBox(Matrix4 t, Vector3 o, Vector3 minCor, Vector3 maxCor) : BoundingBox(t, o), minCorner(minCor), maxCorner(maxCor) {}
+	
 protected:
-	virtual Vector3 GetMaxDistancePointFromPosition(Vector3 position) const;
-
+	
 	Vector3 minCorner;
 	Vector3 maxCorner;
 };

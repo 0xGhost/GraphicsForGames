@@ -35,8 +35,8 @@ public:
 	void SetShader(Shader* s) { shader = s; }
 	GLuint GetTexture() const { return texture; }
 	void SetTexture(GLuint t) { texture = t; }
-	float GetBoundingRadius() const { return boundingRadius; }
-	void SetBoundingRadius(float br) { boundingRadius = br; }
+	//float GetBoundingRadius() const { return boundingRadius; }
+	//void SetBoundingRadius(float br) { boundingRadius = br; }
 	BoundingVolume* GetBoundingVolume() const { return boundingVolume; }
 	void SetBoundingVolume(BoundingVolume* bv) { boundingVolume = bv; }
 	float GetCameraDistance() const { return distanceFromCamera; }
@@ -55,7 +55,7 @@ protected:
 	Vector4 colour;
 	float distanceFromCamera;
 	BoundingVolume *boundingVolume;
-	float boundingRadius;
+	//float boundingRadius;
 	// TODO: bounding box
 	std::vector<SceneNode*> children;
 };
