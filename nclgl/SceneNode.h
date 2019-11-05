@@ -3,6 +3,7 @@
 #include "Vector3.h"
 #include "Vector2.h"
 #include "Mesh.h"
+#include "BoundingVolume.h"
 #include <vector>
 
 class SceneNode
@@ -15,8 +16,12 @@ public:
 	void DeleteChild(size_t index); // index start from 0
 
 	virtual void Update(float msec);
-	virtual void Draw(const OGLRenderer& r);	/* TODO: virtual void CalculateBoundingRadius();*/	std::vector<SceneNode*>::const_iterator GetChildIteratorStart() { return children.begin(); }
-	std::vector<SceneNode*>::const_iterator GetChildIteratorEnd() { return children.end(); }
+	virtual void Draw(const OGLRenderer& r);
+	/* TODO: virtual void CalculateBoundingRadius();*/
+
+	std::vector<SceneNode*>::const_iterator GetChildIteratorStart() { return children.begin(); }
+	std::vector<SceneNode*>::const_iterator GetChildIteratorEnd() { return children.end(); }
+
 	void SetTransform(const Matrix4& matrix) { transform = matrix; }
 	const Matrix4& GetTransform() const { return transform; }
 	Matrix4 GetWorldTransform() const { return worldTransform; }
@@ -32,6 +37,8 @@ public:
 	void SetTexture(GLuint t) { texture = t; }
 	float GetBoundingRadius() const { return boundingRadius; }
 	void SetBoundingRadius(float br) { boundingRadius = br; }
+	BoundingVolume* GetBoundingVolume() const { return boundingVolume; }
+	void SetBoundingVolume(BoundingVolume* bv) { boundingVolume = bv; }
 	float GetCameraDistance() const { return distanceFromCamera; }
 	void SetCameraDistance(float dis) { distanceFromCamera = dis; }
 
@@ -47,6 +54,7 @@ protected:
 	Vector3 modelScale;
 	Vector4 colour;
 	float distanceFromCamera;
+	BoundingVolume *boundingVolume;
 	float boundingRadius;
 	// TODO: bounding box
 	std::vector<SceneNode*> children;

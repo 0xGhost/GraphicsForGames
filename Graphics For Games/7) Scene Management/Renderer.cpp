@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include "../../nclgl/BoundingSphere.h"
 
 Renderer::Renderer(Window& parent) : OGLRenderer(parent)
 {
@@ -11,7 +12,7 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent)
 	if (!currentShader->LinkProgram()) return;
 
 	quad = Mesh::GenerateQuad();
-	quad->SetTexture(SOIL_load_OGL_texture(TEXTUREDIR "stainedglass.tga", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0));
+	quad->SetTexture(SOIL_load_OGL_texture(TEXTUREDIR "Dva.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0));
 	if (!quad->GetTexture()) return;
 
 	root = new SceneNode();
@@ -21,8 +22,10 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent)
 		s->SetTransform(Matrix4::Translation(Vector3(0, 100.0f, -300.0f + 100.0f + 100 * i)));
 		s->SetModelScale(Vector3(100.0f, 100.0f, 100.0f));
 		s->SetBoundingRadius(100.0f);
+		s->SetBoundingVolume(new BoundingSphere(s->GetWorldTransform().GetPositionVector(), 100.0f));
 		s->SetMesh(quad);
-		root->AddChild(s);	}
+		root->AddChild(s);
+	}
 	root->AddChild(new CubeRobot());
 
 	glEnable(GL_DEPTH_TEST);
@@ -67,8 +70,9 @@ void Renderer::BuildNodeLists(SceneNode* from)
 	if (frameFrustum.InsideFrustum(*from)) {
 		Vector3 dir = from->GetWorldTransform().GetPositionVector() - camera->GetPosition();
 		from->SetCameraDistance(Vector3::Dot(dir, dir));
-
-		if (from->GetColour().w < 1.0f)
+		float textureA  = 1.1f;
+		if (from->GetTexture()) glGetTexLevelParameterfv(GL_TEXTURE_2D, 0, GL_TEXTURE_ALPHA_SIZE, &textureA);
+		if (from->GetColour().w < 1.0f  || textureA < 1.0f)
 		{
 			transparentNodeList.push_back(from);
 		}
@@ -80,7 +84,8 @@ void Renderer::BuildNodeLists(SceneNode* from)
 
 	for (vector<SceneNode*>::const_iterator i =	from->GetChildIteratorStart(); i != from->GetChildIteratorEnd(); i++) 
 	{
-		BuildNodeLists(*i);	}
+		BuildNodeLists(*i);
+	}
 }
 
 void Renderer::SortNodeLists()

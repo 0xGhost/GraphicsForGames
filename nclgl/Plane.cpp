@@ -21,3 +21,8 @@ bool Plane::SphereInPlane(const Vector3& position, float radius) const
 	return (Vector3::Dot(position, normal) + distance) > -radius;
 
 }
+
+bool Plane::PointInPlane(const Vector3& position) const
+{
+	return (Vector3::Dot(position, normal) + distance) > 0;
+}

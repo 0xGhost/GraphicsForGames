@@ -19,10 +19,17 @@ bool Frustum::InsideFrustum(SceneNode& n)
 {
 	for (int i = 0; i < 6; i++)
 	{
-		if (!planes[i].SphereInPlane(n.GetWorldTransform().GetPositionVector(), n.GetBoundingRadius()))
-		{
-			return false;
+#if 1
+		if (n.GetBoundingVolume() && !n.GetBoundingVolume()->IsInPlane(planes[i])) 
+		{ 
+			return false; 
 		}
+#else
+		if (!planes[i].SphereInPlane(n.GetWorldTransform().GetPositionVector(), n.GetBoundingRadius())) 
+		{ 
+			return false; 
+		}
+#endif
 	}
 	return true;
 }

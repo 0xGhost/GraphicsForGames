@@ -15,6 +15,7 @@ public:
 	float GetDistance() const { return distance; }
 
 	bool SphereInPlane(const Vector3& position, float radius) const;
+	bool PointInPlane(const Vector3& position) const;
 
 protected:
 	Vector3 normal;
