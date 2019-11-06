@@ -1,11 +1,11 @@
-#ifdef WEEK_2_CODE
+
 #include "Renderer.h"
 
 Renderer::Renderer(Window &parent) : OGLRenderer(parent)	{	
 	camera			= new Camera(0,-90.0f,Vector3(-180,60,0));
 
 #ifdef MD5_USE_HARDWARE_SKINNING
-	currentShader   = new Shader("skeletonvertex.glsl", SHADERDIR"TexturedFragment.glsl");
+	currentShader   = new Shader("skeletonVertex.glsl", SHADERDIR"TexturedFragment.glsl");
 #else
 	currentShader   = new Shader(SHADERDIR"TexturedVertex.glsl", SHADERDIR"TexturedFragment.glsl");
 #endif
@@ -50,7 +50,7 @@ void Renderer::RenderScene()	{
 	glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "diffuseTex"), 0);
 
 	UpdateShaderMatrices();
-
+#ifdef MD5_USE_HARDWARE_SKINNING
 	for(int y = 0; y < 10; ++y) {
 		for(int x = 0; x < 10; ++x) {
 			modelMatrix = Matrix4::Translation(Vector3(x * 100, 0, y * 100));
@@ -58,8 +58,10 @@ void Renderer::RenderScene()	{
 			hellNode->Draw(*this);
 		}
 	}
+#else
+	hellNode->Draw(*this);
+#endif
 
 	glUseProgram(0);
 	SwapBuffers();
 }
-#endif

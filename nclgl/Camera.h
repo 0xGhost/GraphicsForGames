@@ -21,7 +21,7 @@ class Camera
 {
 public:
 
-	Camera(float pitch = 0.0f, float yaw = 0.0f, Vector3 position = Vector3(0, 0, 0), float moveSpeed = 1.0f, float mouseSpeed = 1.0f)
+	Camera(float pitch = 0.0f, float yaw = 0.0f, Vector3 position = Vector3(0, 0, 0), float moveSpeed = 1.0f, float mouseSpeed = 0.4f)
 		: pitch(pitch), yaw(yaw), position(position), moveSpeed(moveSpeed), mouseSpeed(mouseSpeed) {}
 
 	~Camera(void) {};

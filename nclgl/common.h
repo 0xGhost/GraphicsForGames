@@ -24,7 +24,7 @@ If you want to play around with MD5Meshes in the first real time lighting tutori
 uncomment the MD5_USE_NORMALS define. If you want to use and MD5Mesh in the second real
 time lighting tutorial, uncomment both MD5_USE_NORMALS and MD5_USE_TANGENTS_BUMPMAPS
 */
-//#define USE_MD5MESH
+#define USE_MD5MESH
 //#define MD5_USE_NORMALS
 //#define MD5_USE_TANGENTS_BUMPMAPS
 

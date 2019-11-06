@@ -1,4 +1,4 @@
-#ifdef WEEK_2_CODE
+
 #pragma once
 
 #include "../../nclgl/OGLRenderer.h"
@@ -19,4 +19,4 @@ protected:
 	MD5Node*	hellNode;
 	Camera*		camera;
 };
-#endif
+

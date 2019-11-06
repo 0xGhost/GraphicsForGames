@@ -165,6 +165,7 @@ bool	OBJMesh::LoadOBJMesh(std::string filename)	{
 				}
 			}
 			else{	
+				std::cout << __func__ << ": Can't read face with faceIndex count of " << faceIndices.size() << std::endl;
 				//Uh oh! Face isn't a triangle. Have fun adding stuff to this ;)
 				bool a = true;
 			}
@@ -175,6 +176,8 @@ bool	OBJMesh::LoadOBJMesh(std::string filename)	{
 	}
 
 	f.close();
+
+	map <string, MTLInfo> materials;
 
 	//We now have all our mesh data loaded in...Now to convert it into OpenGL vertex buffers!
 	for(unsigned int i = 0; i < inputSubMeshes.size(); ) {
@@ -199,7 +202,7 @@ bool	OBJMesh::LoadOBJMesh(std::string filename)	{
 				m = new OBJMesh();
 			}
 
-			m->SetTexturesFromMTL(sm->mtlSrc, sm->mtlType);
+			m->SetTexturesFromMTL(sm->mtlSrc, sm->mtlType, materials);
 
 			m->numVertices	= sm->vertIndices.size();
 
@@ -258,7 +261,7 @@ void OBJMesh::Draw() {
 	}
 };
 
-void	OBJMesh::SetTexturesFromMTL(string &mtlFile, string &mtlType) {
+void	OBJMesh::SetTexturesFromMTL(string &mtlFile, string &mtlType, map <string, MTLInfo>& materials) {
 	if(mtlType.empty() || mtlFile.empty()) {
 		return;
 	}
@@ -339,7 +342,7 @@ void	OBJMesh::SetTexturesFromMTL(string &mtlFile, string &mtlType) {
 
 	materials.insert(std::make_pair(currentMTLName,currentMTL));
 
-	SetTexturesFromMTL(mtlFile,mtlType);
+	SetTexturesFromMTL(mtlFile,mtlType, materials);
 }
 
 #endif

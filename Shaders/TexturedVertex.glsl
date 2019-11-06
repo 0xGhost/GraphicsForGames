@@ -10,8 +10,11 @@ in vec4 color;
 in vec2 texCoord;
 
 out Vertex {
-	vec2 texCoord;
 	vec4 color;
+	vec2 texCoord;
+	vec3 	normal;
+	vec3 	tangent;
+	vec3 	worldPos;
 } OUT;
 
 void main(void) {

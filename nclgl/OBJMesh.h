@@ -141,9 +141,7 @@ public:
 	virtual void Draw();
 
 protected:
-	void	SetTexturesFromMTL(string &mtlFile, string &mtlType);
-
-	map <string, MTLInfo> materials;
+	void	SetTexturesFromMTL(string &mtlFile, string &mtlType, map <string, MTLInfo>& allMats);
 };
 
 #endif

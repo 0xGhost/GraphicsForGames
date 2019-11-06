@@ -7,6 +7,7 @@ uniform mat4 projMatrix;
 uniform samplerBuffer weightTex;
 uniform samplerBuffer transformTex;
 
+in vec4 color;
 in  vec3 position;
 in 	vec3 normal;
 in 	vec3 tangent;
@@ -18,7 +19,7 @@ layout(location = 10) in vec2 weighting;
 //			target->weights[j].y = subMesh.verts[j].weightIndex;
 
 out Vertex	{
-	vec4 	colour;
+	vec4 	color;
 	vec2 	texCoord;
 	vec3 	normal;
 	vec3 	tangent;
@@ -73,6 +74,6 @@ void main(void)	{
 	
 	OUT.normal 		= normalMatrix * normalize(oNormal);
 	OUT.tangent 	= normalMatrix * normalize(oTangent);
-
+	OUT.color = color;
 	gl_Position		= (projMatrix * viewMatrix * modelMatrix) * vec4(vertPos.xyz, 1.0);
 }

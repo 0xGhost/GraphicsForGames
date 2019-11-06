@@ -77,6 +77,11 @@
   <ItemGroup>
     <ClInclude Include="Renderer.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="skeletonVertex Commented.glsl" />
+    <None Include="skeletonVertex.glsl" />
+    <None Include="skeletonVertexSimple.glsl" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
