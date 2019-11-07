@@ -13,7 +13,7 @@ public:
 	~Mesh();
 	virtual void Draw();
 	static Mesh* GenerateTriangle();
-	static Mesh* GenerateQuad();
+	static Mesh* GenerateQuad(Vector3 position[4] = nullptr);
 	static Mesh* GenerateCube();
 
 

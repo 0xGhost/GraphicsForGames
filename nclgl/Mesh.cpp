@@ -84,7 +84,7 @@ Mesh* Mesh::GenerateTriangle()
 	return m;
 }
 
-Mesh* Mesh::GenerateQuad()
+Mesh* Mesh::GenerateQuad(Vector3 positions[4])
 {
 	Mesh* m = new Mesh();
 	m->numVertices = 4;
@@ -93,11 +93,18 @@ Mesh* Mesh::GenerateQuad()
 	m->vertices = new Vector3[m->numVertices];
 	m->textureCoords = new Vector2[m->numVertices];
 	m->colours = new Vector4[m->numVertices];
+	if (positions == nullptr)
+	{
+		m->vertices[0] = Vector3(-1.0f, -1.0f, 0.0f);
+		m->vertices[1] = Vector3(-1.0f, 1.0f, 0.0f);
+		m->vertices[2] = Vector3(1.0f, -1.0f, 0.0f);
+		m->vertices[3] = Vector3(1.0f, 1.0f, 0.0f);
+	}
+	else
+	{
+		memcpy(m->vertices, positions, 4 * sizeof(Vector3));
+	}
 
-	m->vertices[0] = Vector3(-1.0f, -1.0f, 0.0f);
-	m->vertices[1] = Vector3(-1.0f, 1.0f, 0.0f);
-	m->vertices[2] = Vector3(1.0f, -1.0f, 0.0f);
-	m->vertices[3] = Vector3(1.0f, 1.0f, 0.0f);
 
 	m->textureCoords[0] = Vector2(0.0f, 1.0f);
 	m->textureCoords[1] = Vector2(0.0f, 0.0f);
