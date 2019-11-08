@@ -177,10 +177,19 @@ bool OGLRenderer::HasInitialised() const {
 }
 
 void OGLRenderer::SetShaderLight(const Light *l) {
-	float *positions = new float[16];
-	float*colour = new float[16];
-	float*specularColour = new float[16];
-	float *radius = new float[16];
+	
+	Vector3 positions[4];
+	Vector4 colour[4];
+	Vector4 specularColour[4];
+	float radius[4];
+	for (size_t i = 0; i < 4; i++)
+	{
+		positions[i] = l[i].GetPosition();
+		colour[i] = l[i].GetColour();
+		specularColour[i] = l[i].GetSpecularColour();
+		radius[i] = l[i].GetRadius();
+	}
+	/*
 	for (size_t i = 0; i < 4; i++)
 	{
 		positions[i] = l[i].GetPosition().x;
@@ -195,12 +204,22 @@ void OGLRenderer::SetShaderLight(const Light *l) {
 		specularColour[i+2] = l[i].GetSpecularColour().z;
 		specularColour[i+3] = l[i].GetSpecularColour().w;
 		radius[i] = l[i].GetRadius();
-	}
-	glUniform3fv(glGetUniformLocation(currentShader->GetProgram(), "lightPos"), 4, (float*) positions);
-	glUniform4fv(glGetUniformLocation(currentShader->GetProgram(), "lightColour"), 4, (float*) colour);
-	glUniform4fv(glGetUniformLocation(currentShader->GetProgram(), "lightSpecularColour"), 4, (float*) specularColour);
-	glUniform1fv(glGetUniformLocation(currentShader->GetProgram(), "lightRadius"), 4, radius);
+	}*/
+	/*
+	float a = l[0].GetRadius();
+	glUniform4fv(glGetUniformLocation(currentShader->GetProgram(), "lightColour"), 1, (float*)& l[0].GetColour());
+	glUniform4fv(glGetUniformLocation(currentShader->GetProgram(), "lightSpecularColour"), 1, (float*)& l[0].GetSpecularColour());
+	glUniform3fv(glGetUniformLocation(currentShader->GetProgram(), "lightPos"), 1, (float*)& l[0].GetPosition());
 
+	glUniform1fv(glGetUniformLocation(currentShader->GetProgram(), "lightRadius"),1, &a);
+	*/
+	
+	glUniform4fv(glGetUniformLocation(currentShader->GetProgram(), "lightColour"), 4, (float*)colour);
+	glUniform4fv(glGetUniformLocation(currentShader->GetProgram(), "lightSpecularColour"), 4, (float*)specularColour);
+	glUniform3fv(glGetUniformLocation(currentShader->GetProgram(), "lightPos"), 4, (float*) positions);
+	
+	glUniform1fv(glGetUniformLocation(currentShader->GetProgram(), "lightRadius"), 4, radius);
+	
 }
 
 /*

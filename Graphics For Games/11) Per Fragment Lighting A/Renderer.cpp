@@ -25,7 +25,7 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent) {
 		{Vector4(1.0,1.0,0.5f,1.0), Vector4(0.5f,0,1.0,1.0)},
 
 	};
-	int offset = 100;
+	float offset = 100.0f;
 	for (int i = 0; i < 4; i++)
 		light[i] = new Light(Vector3((RAW_HEIGHT * HEIGHTMAP_X / 2.0f + offset * i),
 			500.0f, (RAW_HEIGHT * HEIGHTMAP_Z / 2.0f + offset * i)),
