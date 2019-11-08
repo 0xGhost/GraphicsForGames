@@ -95,7 +95,10 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent)
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glEnable(GL_DEPTH_TEST);
-	init = true;}Renderer ::~Renderer(void)
+	init = true;
+}
+
+Renderer ::~Renderer(void)
 {
 	delete sceneShader;
 	delete processShader;
@@ -113,7 +116,10 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent)
 	glDeleteTextures(1, &bufferDepthTex0);
 	glDeleteFramebuffers(1, &bufferFBO);
 	glDeleteFramebuffers(1, &bufferFBO0);
-	glDeleteFramebuffers(1, &processFBO);}void Renderer::UpdateScene(float msec)
+	glDeleteFramebuffers(1, &processFBO);
+}
+
+void Renderer::UpdateScene(float msec)
 {
 	//camera0->UpdateCamera(msec);
 	camera->UpdateCamera(msec);
@@ -166,7 +172,8 @@ void Renderer::DrawPostProcess()
 
 	glDisable(GL_DEPTH_TEST);
 
-	glUniform2f(glGetUniformLocation(currentShader->GetProgram(), "pixelSize"), 1.0f / width, 1.0f / height);	for (int i = 0; i < POST_PASSES; i++)
+	glUniform2f(glGetUniformLocation(currentShader->GetProgram(), "pixelSize"), 1.0f / width, 1.0f / height);
+	for (int i = 0; i < POST_PASSES; i++)
 	{
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, bufferColourTex[1], 0);
 		glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "isVertical"), 0);
@@ -179,12 +186,16 @@ void Renderer::DrawPostProcess()
 
 		quad->SetTexture(bufferColourTex[1]);
 		quad->Draw();
-	}
+
+	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glUseProgram(0);
 
-	glEnable(GL_DEPTH_TEST);}void Renderer::PresentScene() {
+	glEnable(GL_DEPTH_TEST);
+}
+
+void Renderer::PresentScene() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	SetCurrentShader(sceneShader);

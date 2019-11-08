@@ -1,15 +1,16 @@
 c:\users\b9010077\source\repos\graphic\download\nclgl\debug\nclgl.pdb
 c:\users\b9010077\source\repos\graphic\download\nclgl\debug\nclgl.idb
-c:\users\b9010077\source\repos\graphic\download\nclgl\debug\quaternion.obj
 c:\users\b9010077\source\repos\graphic\download\nclgl\debug\plane.obj
 c:\users\b9010077\source\repos\graphic\download\nclgl\debug\oglrenderer.obj
 c:\users\b9010077\source\repos\graphic\download\nclgl\debug\objmesh.obj
 c:\users\b9010077\source\repos\graphic\download\nclgl\debug\mouse.obj
+c:\users\b9010077\source\repos\graphic\download\nclgl\debug\mesh.obj
 c:\users\b9010077\source\repos\graphic\download\nclgl\debug\md5node.obj
 c:\users\b9010077\source\repos\graphic\download\nclgl\debug\md5mesh.obj
 c:\users\b9010077\source\repos\graphic\download\nclgl\debug\md5filedata.obj
 c:\users\b9010077\source\repos\graphic\download\nclgl\debug\md5anim.obj
 c:\users\b9010077\source\repos\graphic\download\nclgl\debug\matrix4.obj
+c:\users\b9010077\source\repos\graphic\download\nclgl\debug\light.obj
 c:\users\b9010077\source\repos\graphic\download\nclgl\debug\keyboard.obj
 c:\users\b9010077\source\repos\graphic\download\nclgl\debug\heightmap.obj
 c:\users\b9010077\source\repos\graphic\download\nclgl\debug\gametimer.obj
@@ -22,6 +23,12 @@ c:\users\b9010077\source\repos\graphic\download\nclgl\debug\aaboundingbox.obj
 c:\users\b9010077\source\repos\graphic\download\nclgl\debug\window.obj
 c:\users\b9010077\source\repos\graphic\download\nclgl\debug\shader.obj
 c:\users\b9010077\source\repos\graphic\download\nclgl\debug\scenenode.obj
+c:\users\b9010077\source\repos\graphic\download\nclgl\debug\quaternion.obj
+c:\users\b9010077\source\repos\graphic\download\graphics for games\debug\nclgl.lib
+c:\users\b9010077\source\repos\graphic\download\graphics for games\debug\nclgl.pdb
 c:\users\b9010077\source\repos\graphic\download\nclgl\debug\nclgl.tlog\cl.command.1.tlog
 c:\users\b9010077\source\repos\graphic\download\nclgl\debug\nclgl.tlog\cl.read.1.tlog
 c:\users\b9010077\source\repos\graphic\download\nclgl\debug\nclgl.tlog\cl.write.1.tlog
+c:\users\b9010077\source\repos\graphic\download\nclgl\debug\nclgl.tlog\lib-link.read.1.tlog
+c:\users\b9010077\source\repos\graphic\download\nclgl\debug\nclgl.tlog\lib-link.write.1.tlog
+c:\users\b9010077\source\repos\graphic\download\nclgl\debug\nclgl.tlog\lib.command.1.tlog

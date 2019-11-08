@@ -20,6 +20,7 @@
     <ClCompile Include="GameTimer.cpp" />
     <ClCompile Include="HeightMap.cpp" />
     <ClCompile Include="Keyboard.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="Matrix4.cpp" />
     <ClCompile Include="MD5Anim.cpp" />
     <ClCompile Include="MD5FileData.cpp" />
@@ -48,6 +49,7 @@
     <ClInclude Include="HeightMap.h" />
     <ClInclude Include="InputDevice.h" />
     <ClInclude Include="Keyboard.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="Matrix4.h" />
     <ClInclude Include="MD5Anim.h" />
     <ClInclude Include="MD5FileData.h" />

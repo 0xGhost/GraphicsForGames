@@ -7,6 +7,7 @@
   GameTimer.cpp
   HeightMap.cpp
   Keyboard.cpp
+  Light.cpp
   Matrix4.cpp
   MD5Anim.cpp
   MD5FileData.cpp
@@ -17,9 +18,9 @@
   OBJMesh.cpp
   OGLRenderer.cpp
   Plane.cpp
-  Quaternion.cpp
   Generating Code...
   Compiling...
+  Quaternion.cpp
   SceneNode.cpp
   Shader.cpp
   Window.cpp

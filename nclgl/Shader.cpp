@@ -45,6 +45,7 @@ void Shader::SetDefaultAttributes()
 {
 	glBindAttribLocation(program, VERTEX_BUFFER, "position");
 	glBindAttribLocation(program, COLOUR_BUFFER, "colour");
+	glBindAttribLocation(program, NORMAL_BUFFER, " normal ");
 	glBindAttribLocation(program, TEXTURE_BUFFER, "texCoord");
 }
 
