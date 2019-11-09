@@ -176,18 +176,25 @@ bool OGLRenderer::HasInitialised() const {
 	return init;
 }
 
-void OGLRenderer::SetShaderLight(const Light *l) {
-	
-	Vector3 positions[4];
-	Vector4 colour[4];
-	Vector4 specularColour[4];
-	float radius[4];
-	for (size_t i = 0; i < 4; i++)
+void OGLRenderer::SetShaderLight(const Light* l) {
+
+	const int lightNum = 1;
+	Vector3 positions[lightNum];
+	Vector4 colour[lightNum];
+	Vector4 specularColour[lightNum];
+	float angles[lightNum];
+	float radius[lightNum];
+	Vector3 direction[lightNum];
+	LightType type[lightNum];
+	for (size_t i = 0; i < lightNum; i++)
 	{
 		positions[i] = l[i].GetPosition();
 		colour[i] = l[i].GetColour();
 		specularColour[i] = l[i].GetSpecularColour();
+		angles[i] = l[i].GetAngle();
 		radius[i] = l[i].GetRadius();
+		direction[i] = l[i].GetDirection();
+		type[i] = l[i].GetType();
 	}
 	/*
 	for (size_t i = 0; i < 4; i++)
@@ -213,13 +220,16 @@ void OGLRenderer::SetShaderLight(const Light *l) {
 
 	glUniform1fv(glGetUniformLocation(currentShader->GetProgram(), "lightRadius"),1, &a);
 	*/
-	
-	glUniform4fv(glGetUniformLocation(currentShader->GetProgram(), "lightColour"), 4, (float*)colour);
-	glUniform4fv(glGetUniformLocation(currentShader->GetProgram(), "lightSpecularColour"), 4, (float*)specularColour);
-	glUniform3fv(glGetUniformLocation(currentShader->GetProgram(), "lightPos"), 4, (float*) positions);
-	
-	glUniform1fv(glGetUniformLocation(currentShader->GetProgram(), "lightRadius"), 4, radius);
-	
+
+	glUniform4fv(glGetUniformLocation(currentShader->GetProgram(), "lightColour"), lightNum, (float*)colour);
+	glUniform4fv(glGetUniformLocation(currentShader->GetProgram(), "lightSpecularColour"), lightNum, (float*)specularColour);
+	glUniform3fv(glGetUniformLocation(currentShader->GetProgram(), "lightPos"), lightNum, (float*)positions);
+	glUniform3fv(glGetUniformLocation(currentShader->GetProgram(), "lightDir"), lightNum, (float*)direction);
+	glUniform1fv(glGetUniformLocation(currentShader->GetProgram(), "lightRadius"), lightNum, radius);
+	glUniform1fv(glGetUniformLocation(currentShader->GetProgram(), "lightAngle"), lightNum, angles);
+	glUniform1iv(glGetUniformLocation(currentShader->GetProgram(), "lightType"), lightNum, (int*)type);
+
+
 }
 
 /*

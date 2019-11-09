@@ -28,8 +28,8 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent) {
 	float offset = 100.0f;
 	for (int i = 0; i < 4; i++)
 		light[i] = new Light(Vector3((RAW_HEIGHT * HEIGHTMAP_X / 2.0f + offset * i),
-			500.0f, (RAW_HEIGHT * HEIGHTMAP_Z / 2.0f + offset * i)),
-			colors[i][0], colors[i][1], (RAW_WIDTH * HEIGHTMAP_X) / 2.0f);
+			2000.0f, (RAW_HEIGHT * HEIGHTMAP_Z / 2.0f + offset * i)),
+			colors[i][0], colors[i][1], SpotLight, (RAW_WIDTH * HEIGHTMAP_X) / 2.0f, Vector3(0, -1, 0), 50.0f);
 
 	projMatrix = Matrix4::Perspective(1.0f, 15000.0f,
 		(float)width / (float)height, 45.0f);
