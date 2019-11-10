@@ -65,7 +65,7 @@ void Mesh::Draw()
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Mesh::GenerateNormals() 
+void Mesh::GenerateNormals()
 {
 	if (!normals)
 	{
@@ -112,24 +112,24 @@ void Mesh::GenerateNormals()
 	}
 }
 
-void Mesh::GenerateTangents() 
+void Mesh::GenerateTangents()
 {
-	if (!tangents) 
+	if (!tangents)
 	{
 		tangents = new Vector3[numVertices];
 	}
-	if (!textureCoords) 
+	if (!textureCoords)
 	{
-		return; 
+		return;
 	}
 	for (GLuint i = 0; i < numVertices; i++)
 	{
 		tangents[i] = Vector3();
 	}
 
-	if (indices) 
+	if (indices)
 	{
-		for (GLuint i = 0; i < numIndices; i += 3) 
+		for (GLuint i = 0; i < numIndices; i += 3)
 		{
 			int a = indices[i];
 			int b = indices[i + 1];
@@ -144,27 +144,27 @@ void Mesh::GenerateTangents()
 			tangents[c] += tangent;
 		}
 	}
-	else 
+	else
 	{
-		for (GLuint i = 0; i < numVertices; i += 3) 
+		for (GLuint i = 0; i < numVertices; i += 3)
 		{
 			Vector3 tangent = GenerateTangent(vertices[i], vertices[i + 1],
-											vertices[i + 2], textureCoords[i],
-											textureCoords[i + 1], textureCoords[i + 2]);
+				vertices[i + 2], textureCoords[i],
+				textureCoords[i + 1], textureCoords[i + 2]);
 			tangents[i] += tangent;
 			tangents[i + 1] += tangent;
 			tangents[i + 2] += tangent;
 		}
 	}
-	for (GLuint i = 0; i < numVertices; i++) 
+	for (GLuint i = 0; i < numVertices; i++)
 	{
 		tangents[i].Normalise();
 	}
 }
 
 Vector3 Mesh::GenerateTangent(const Vector3& a, const Vector3& b,
-							const Vector3& c, const Vector2& ta,
-							const Vector2& tb, const Vector2& tc) 
+	const Vector3& c, const Vector2& ta,
+	const Vector2& tb, const Vector2& tc)
 {
 	Vector2 coord1 = tb - ta;
 	Vector2 coord2 = tc - ta;
@@ -222,6 +222,9 @@ Mesh* Mesh::GenerateQuad(Vector3 positions[4])
 	m->vertices = new Vector3[m->numVertices];
 	m->textureCoords = new Vector2[m->numVertices];
 	m->colours = new Vector4[m->numVertices];
+	m->normals = new Vector3[m->numVertices];
+	m->tangents = new Vector3[m->numVertices];
+
 	if (positions == nullptr)
 	{
 		m->vertices[0] = Vector3(-1.0f, -1.0f, 0.0f);
@@ -243,6 +246,8 @@ Mesh* Mesh::GenerateQuad(Vector3 positions[4])
 	for (int i = 0; i < 4; i++)
 	{
 		m->colours[i] = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+		m->normals[i] = Vector3(0.0f, 0.0f, -1.0f);
+		m->tangents[i] = Vector3(1.0f, 0.0f, 0.0f);
 	}
 
 	m->BufferData();
@@ -285,13 +290,13 @@ void Mesh::BufferData()
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices * sizeof(GLuint), indices, GL_STATIC_DRAW);
 	}
 
-	if (normals) 
+	if (normals)
 	{
-		 glGenBuffers(1, &bufferObject[NORMAL_BUFFER]);
-		 glBindBuffer(GL_ARRAY_BUFFER, bufferObject[NORMAL_BUFFER]);
-		 glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(Vector3), normals, GL_STATIC_DRAW);
-		 glVertexAttribPointer(NORMAL_BUFFER, 3, GL_FLOAT, GL_FALSE, 0, 0);
-		 glEnableVertexAttribArray(NORMAL_BUFFER);
+		glGenBuffers(1, &bufferObject[NORMAL_BUFFER]);
+		glBindBuffer(GL_ARRAY_BUFFER, bufferObject[NORMAL_BUFFER]);
+		glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(Vector3), normals, GL_STATIC_DRAW);
+		glVertexAttribPointer(NORMAL_BUFFER, 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(NORMAL_BUFFER);
 	}
 
 	if (tangents) {
