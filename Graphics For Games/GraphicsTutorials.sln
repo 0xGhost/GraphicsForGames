@@ -66,6 +66,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 14 - Shadow Mappin
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 15 - Deferred Shading", "15) Deferred Shading\Tutorial15.vcxproj", "{55C75BC7-89C2-4B38-8118-CF8C26426E7A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{98D6B51B-CB0A-4389-ADC6-24082B967C3F} = {98D6B51B-CB0A-4389-ADC6-24082B967C3F}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Graphics Coursework", "Graphics Coursework", "{B12FA29E-1613-4E55-9C1D-B7DCD8A760D8}"
 EndProject

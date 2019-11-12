@@ -132,7 +132,7 @@ void Renderer::DrawShadowScene()
 
 	if (light->GetType() == DirectionLight)
 	{
-		projMatrix = Matrix4::Orthographic(-1, 10000, 10, -10, 10, -10);
+		projMatrix = Matrix4::Orthographic(-1, 10000, 100, -100, 1000, -100);
 	}
 	else
 	{
@@ -152,8 +152,7 @@ void Renderer::DrawShadowScene()
 	glUseProgram(0);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glViewport(0, 0, width, height);
-	projMatrix = Matrix4::Perspective(1.0f, 15000.0f,
-		(float)width / (float)height, 45.0f);
+	projMatrix = Matrix4::Perspective(1.0f, 15000.0f, (float)width / (float)height, 45.0f);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 

@@ -12,6 +12,10 @@ enum LightType
 
 class Light { // point light
 public:
+	Light()
+	{
+
+	}
 
 	Light(Vector3 position, Vector4 colour, Vector4 specularColour, LightType type = PointLight, float radius = 0, Vector3 direction = Vector3(0, -1, 0), float angle = 0.0f)
 	{

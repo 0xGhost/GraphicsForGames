@@ -1,3 +1,4 @@
 ﻿  Renderer.cpp
-C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\14) Shadow Mapping\Renderer.cpp(7,86): warning C4305:  'argument': truncation from 'double' to 'const float'
-  tutorial14.vcxproj -> C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Debug\Tutorial 14 - Shadow Mapping.exe
+C:\Users\xxlya\source\repos\0xGhost\GraphicsForGames\nclgl\Keyboard.h(1,1): warning C4819:  The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
+C:\Users\xxlya\source\repos\0xGhost\GraphicsForGames\Graphics For Games\14) Shadow Mapping\Renderer.cpp(7,86): warning C4305:  'argument': truncation from 'double' to 'const float'
+  tutorial14.vcxproj -> C:\Users\xxlya\Source\Repos\0xGhost\GraphicsForGames\Graphics For Games\Debug\Tutorial 14 - Shadow Mapping.exe
