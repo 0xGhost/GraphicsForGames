@@ -11,10 +11,12 @@ Mesh::Mesh()
 	numVertices = 0;
 	vertices = nullptr;
 	colours = nullptr;
+	specularColours = nullptr;
 	normals = NULL;
 	type = GL_TRIANGLES;
 	tangents = NULL;
 	bumpTexture = 0;
+	glossTexture = 0;
 }
 
 Mesh::~Mesh()
@@ -23,9 +25,11 @@ Mesh::~Mesh()
 	glDeleteBuffers(MAX_BUFFER, bufferObject);
 	glDeleteTextures(1, &texture);
 	glDeleteTextures(1, &bumpTexture);
+	glDeleteTextures(1, &glossTexture);
 	delete[] textureCoords;
 	delete[] vertices;
 	delete[] colours;
+	delete[] specularColours;
 	delete[] indices;
 	delete[] normals;
 	delete[] tangents;
@@ -41,6 +45,9 @@ void Mesh::Draw()
 
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, bumpTexture);
+
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, glossTexture);
 
 #if 0
 	void* colorPtr = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
@@ -283,18 +290,26 @@ void Mesh::BufferData()
 		glEnableVertexAttribArray(COLOUR_BUFFER);
 	}
 
+	if (specularColours) {
+		glGenBuffers(1, &bufferObject[SPECULAR_BUFFER]);
+		glBindBuffer(GL_ARRAY_BUFFER, bufferObject[SPECULAR_BUFFER]);
+		glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(Vector4), specularColours, GL_DYNAMIC_DRAW);
+		glVertexAttribPointer(SPECULAR_BUFFER, 4, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(SPECULAR_BUFFER);
+	}
+
 	if (indices)
 	{
 		glGenBuffers(1, &bufferObject[INDEX_BUFFER]);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObject[INDEX_BUFFER]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices * sizeof(GLuint), indices, GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices * sizeof(GLuint), indices, GL_DYNAMIC_DRAW);
 	}
 
 	if (normals)
 	{
 		glGenBuffers(1, &bufferObject[NORMAL_BUFFER]);
 		glBindBuffer(GL_ARRAY_BUFFER, bufferObject[NORMAL_BUFFER]);
-		glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(Vector3), normals, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(Vector3), normals, GL_DYNAMIC_DRAW);
 		glVertexAttribPointer(NORMAL_BUFFER, 3, GL_FLOAT, GL_FALSE, 0, 0);
 		glEnableVertexAttribArray(NORMAL_BUFFER);
 	}
@@ -302,10 +317,12 @@ void Mesh::BufferData()
 	if (tangents) {
 		glGenBuffers(1, &bufferObject[TANGENT_BUFFER]);
 		glBindBuffer(GL_ARRAY_BUFFER, bufferObject[TANGENT_BUFFER]);
-		glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(Vector3), tangents, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(Vector3), tangents, GL_DYNAMIC_DRAW);
 		glVertexAttribPointer(TANGENT_BUFFER, 3, GL_FLOAT, GL_FALSE, 0, 0);
 		glEnableVertexAttribArray(TANGENT_BUFFER);
 	}
+
+	
 
 	glBindVertexArray(0);
 }

@@ -42,7 +42,7 @@ accessed via the sampling functionality in a shader. This tends to be significan
 than performing everything on the GPU. 
 */
 
-#define MD5_USE_HARDWARE_SKINNING
+//#define MD5_USE_HARDWARE_SKINNING
 
 #include <fstream>
 #include <string>

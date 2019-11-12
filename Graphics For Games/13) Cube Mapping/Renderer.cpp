@@ -13,12 +13,12 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent) {
 		Vector4(0.9f, 0.9f, 1.0f, 1), Vector4(0.9f, 0.9f, 1.0f, 1),
 		PointLight, (RAW_WIDTH * HEIGHTMAP_X) / 2.0f);
 
-	reflectShader = new Shader(SHADERDIR "PerPixelVertex.glsl",
+	reflectShader = new Shader(SHADERDIR "bumpVertex.glsl",
 		SHADERDIR "reflectFragment.glsl");
 	skyboxShader = new Shader(SHADERDIR "skyboxVertex.glsl",
 		SHADERDIR "skyboxFragment.glsl");
-	lightShader = new Shader(SHADERDIR "PerPixelVertex.glsl",
-		SHADERDIR "PerPixelFragment.glsl");
+	lightShader = new Shader(SHADERDIR "bumpVertex.glsl",
+		SHADERDIR "bumpFragment.glsl");
 
 	if (!reflectShader->LinkProgram()
 		|| !lightShader->LinkProgram()
@@ -27,6 +27,8 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent) {
 		return;
 	}
 	quad->SetTexture(SOIL_load_OGL_texture(TEXTUREDIR "water.TGA",
+		SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS));
+	quad->SetBumpMap(SOIL_load_OGL_texture(TEXTUREDIR "waterDOT3.TGA",
 		SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS));
 
 	heightMap->SetTexture(SOIL_load_OGL_texture(
@@ -45,12 +47,13 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent) {
 	);
 
 	if (!cubeMap || !quad->GetTexture() || !heightMap->GetTexture() ||
-		!heightMap->GetBumpMap())
+		!heightMap->GetBumpMap() || !quad->GetBumpMap())
 	{
 		return;
 	}
 
 	SetTextureRepeating(quad->GetTexture(), true);
+	SetTextureRepeating(quad->GetBumpMap(), true);
 	SetTextureRepeating(heightMap->GetTexture(), true);
 	SetTextureRepeating(heightMap->GetBumpMap(), true);
 
@@ -87,25 +90,28 @@ void Renderer::UpdateScene(float msec)
 
 void Renderer::RenderScene()
 {
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-	DrawSkybox();
+
 	DrawHeightmap();
 	DrawWater();
-
+	DrawSkybox();
 	SwapBuffers();
 }
 
 void Renderer::DrawSkybox()
 {
 	glDepthMask(GL_FALSE);
+	glEnable(GL_STENCIL_TEST);
 	SetCurrentShader(skyboxShader);
+
 
 	UpdateShaderMatrices();
 	quad->Draw();
 
 	glUseProgram(0);
-	glDepthMask(GL_TRUE);
+	glDepthMask(GL_TRUE); 
+	glDisable(GL_STENCIL_TEST);
 }
 
 void Renderer::DrawHeightmap()
@@ -124,9 +130,21 @@ void Renderer::DrawHeightmap()
 	modelMatrix.ToIdentity();
 	textureMatrix.ToIdentity();
 
+
+
 	UpdateShaderMatrices();
+	
+	glEnable(GL_STENCIL_TEST);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glStencilFunc(GL_ALWAYS, 2, ~0);
+	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
 
 	heightMap->Draw();
+
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glStencilFunc(GL_GREATER, 2, ~0);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+	glDisable(GL_STENCIL_TEST);
 
 	glUseProgram(0);
 }

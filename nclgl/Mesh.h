@@ -3,7 +3,7 @@
 
 enum MeshBuffer
 {
-	VERTEX_BUFFER, COLOUR_BUFFER, TEXTURE_BUFFER, NORMAL_BUFFER, TANGENT_BUFFER, INDEX_BUFFER, MAX_BUFFER
+	VERTEX_BUFFER, COLOUR_BUFFER, SPECULAR_BUFFER, TEXTURE_BUFFER, NORMAL_BUFFER, TANGENT_BUFFER, INDEX_BUFFER, MAX_BUFFER
 };
 
 class Mesh
@@ -22,6 +22,8 @@ public:
 	GLuint GetTexture() { return texture; }
 	void SetBumpMap(GLuint tex) { bumpTexture = tex; }
 	GLuint GetBumpMap() { return bumpTexture; }
+	void SetGlossMap(GLuint tex) { glossTexture = tex; }
+	GLuint GetGlossMap() { return glossTexture; }
 
 protected:
 	void BufferData();
@@ -43,8 +45,10 @@ protected:
 	Vector2* textureCoords;
 	Vector3* vertices;
 	Vector4* colours;
+	Vector4* specularColours;
 	Vector3* normals;
 	Vector3* tangents;
 	GLuint bumpTexture;
+	GLuint glossTexture;
 };
 

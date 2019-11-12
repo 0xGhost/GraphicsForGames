@@ -8,6 +8,7 @@ const int SpotLight = 1<<2;
 
 uniform sampler2D diffuseTex;
 uniform sampler2D bumpTex;
+uniform sampler2D glossTex;
 
 uniform vec3 cameraPos;
 
@@ -36,6 +37,8 @@ void main(void)
 	vec4 diffuse = texture(diffuseTex, IN.texCoord);
 	mat3 TBN = mat3(IN.tangent, IN.binormal, IN.normal);
 	vec3 normal = normalize(TBN * (texture (bumpTex, IN.texCoord).rgb * 2.0 - 1.0));
+	vec4 gloss = texture (glossTex, IN.texCoord);
+	float power = gloss.r *gloss.g* gloss.b;
 
 	for (int i = 0; i < LightNum; i++)
 	{
@@ -57,7 +60,9 @@ void main(void)
 		vec3 halfDir = normalize(incident + viewDir);
 
 		float rFactor = max(0.0, dot(halfDir, normal));
-		float sFactor = pow(rFactor, 50.0);
+		
+
+		float sFactor = pow(rFactor, 1.0f * 50.0f);
 
 		vec3 colour = (diffuse.rgb * lightColour[i].rgb);
 		colour += (lightSpecularColour[i].rgb * sFactor);// * 0.33;

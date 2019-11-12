@@ -1,4 +1,4 @@
-# version 150 core
+#version 150 core
 
 uniform samplerCube cubeTex;
 uniform vec3 cameraPos;

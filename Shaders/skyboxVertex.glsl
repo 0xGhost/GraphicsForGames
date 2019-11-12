@@ -1,4 +1,4 @@
-# version 150 core
+#version 150 core
 uniform mat4 viewMatrix;
 uniform mat4 projMatrix;
 
@@ -10,8 +10,8 @@ out Vertex{
 
 void main(void) {
 	vec3 multiply = vec3(0, 0, 0);
-	multiply.x = 1.0 f / projMatrix[0][0];
-	multiply.y = 1.0 f / projMatrix[1][1];
+	multiply.x = 1.0f / projMatrix[0][0];
+	multiply.y = 1.0f / projMatrix[1][1];
 
 	vec3 tempPos = (position * multiply) - vec3(0, 0, 1);
 	OUT.normal = transpose(mat3(viewMatrix)) * normalize(tempPos);

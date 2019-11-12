@@ -61,6 +61,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 13 - Cube Mapping", "13) Cube Mapping\Tutorial13.vcxproj", "{2E797EF1-6CA2-4611-BC4F-A3146AEBB468}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 14 - Shadow Mapping", "14) Shadow Mapping\tutorial14.vcxproj", "{5E5378FE-275C-4B32-935D-22E7A4AD5AA3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{98D6B51B-CB0A-4389-ADC6-24082B967C3F} = {98D6B51B-CB0A-4389-ADC6-24082B967C3F}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 15 - Deferred Shading", "15) Deferred Shading\Tutorial15.vcxproj", "{55C75BC7-89C2-4B38-8118-CF8C26426E7A}"
 EndProject
