@@ -73,6 +73,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Graphics Coursework", "Graphics Coursework", "{B12FA29E-1613-4E55-9C1D-B7DCD8A760D8}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraphicsCoursework", "Graphics Coursework\GraphicsCoursework.vcxproj", "{909A2CFC-6E55-4776-8B60-93B44103A9CF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{98D6B51B-CB0A-4389-ADC6-24082B967C3F} = {98D6B51B-CB0A-4389-ADC6-24082B967C3F}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Extra - Drawing Text", "Extra - Drawing Text\Drawing Text.vcxproj", "{D0AFE823-365D-49D6-B9AD-B417C23A4D1A}"
 EndProject

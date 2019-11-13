@@ -22,10 +22,14 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent)
 			float r = 0.5f + (float)(rand() % 129) / 128.0f;
 			float g = 0.5f + (float)(rand() % 129) / 128.0f;
 			float b = 0.5f + (float)(rand() % 129) / 128.0f;
-			l.SetColour(Vector4(r, g, b, 1.0f)); l.SetSpecularColour(Vector4(r, g, b, 1.0f));
+			float sr = 0.5f + (float)(rand() % 129) / 128.0f;
+			float sg = 0.5f + (float)(rand() % 129) / 128.0f;
+			float sb = 0.5f + (float)(rand() % 129) / 128.0f;
+			l.SetColour(Vector4(r, g, b, 1.0f)); l.SetSpecularColour(Vector4(sr, sg, sb, 1.0f));
 
 			float radius = (RAW_WIDTH * HEIGHTMAP_X / LIGHTNUM);
 			l.SetRadius(radius);
+			l.SetLightType(PointLight);
 		}
 	}
 	heightMap = new HeightMap(TEXTUREDIR "terrain.raw");

@@ -17,6 +17,7 @@ public:
 
 	virtual void Update(float msec);
 	virtual void Draw(const OGLRenderer& r);
+	virtual void ShowBoundingVolume();
 	/* TODO: virtual void CalculateBoundingRadius();*/
 
 	std::vector<SceneNode*>::const_iterator GetChildIteratorStart() { return children.begin(); }
@@ -55,8 +56,6 @@ protected:
 	Vector4 colour;
 	float distanceFromCamera;
 	BoundingVolume *boundingVolume;
-	//float boundingRadius;
-	// TODO: bounding box
 	std::vector<SceneNode*> children;
 };
 

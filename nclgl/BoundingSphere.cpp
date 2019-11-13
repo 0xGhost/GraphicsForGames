@@ -1,5 +1,8 @@
 #include "BoundingSphere.h"
 
+OBJMesh* BoundingSphere::sphere = nullptr;
+
+
 bool BoundingSphere::IsInPlane(Plane p) const
 {
 	return p.SphereInPlane(centrePosition, radius);
@@ -17,6 +20,13 @@ void BoundingSphere::Update(Matrix4 newTrans)
 	BoundingVolume::Update(newTrans);
 	centrePosition = transform.GetPositionVector();
 	radius *= transform.GetScalingVector().Length() / originScale.Length();
+}
+
+void BoundingSphere::Draw() const
+{
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	sphere->Draw();
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 Vector3 BoundingSphere::GetMaxDistancePointFromPosition(Vector3 position) const

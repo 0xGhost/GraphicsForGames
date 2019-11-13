@@ -57,3 +57,10 @@ void SceneNode::Draw(const OGLRenderer& r)
 {
 	if (mesh) mesh->Draw();
 }
+
+void SceneNode::ShowBoundingVolume()
+{
+	if (boundingVolume) boundingVolume->Draw();
+}
+
+
