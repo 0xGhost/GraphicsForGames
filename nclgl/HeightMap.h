@@ -22,5 +22,7 @@ class HeightMap :
 public:
 	HeightMap(std::string name);
 	~HeightMap(void) {};
+
+	void GenerateHeightMap(unsigned char* data = nullptr);
 };
 

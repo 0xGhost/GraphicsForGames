@@ -10,16 +10,18 @@ bool BoundingSphere::IsInPlane(Plane p) const
 
 void BoundingSphere::ExpendVolume(BoundingVolume* childBoundingVolume)
 {
+	float maxR = 0;
 	Vector3 point = childBoundingVolume->GetMaxDistancePointFromPosition(centrePosition);
 	float distance = (centrePosition - point).Length();
-	radius = radius > distance ? radius : distance;
+	maxR = maxR > distance ? maxR : distance;
+	radius = maxR;
 }
 
 void BoundingSphere::Update(Matrix4 newTrans)
 {
-	BoundingVolume::Update(newTrans);
 	centrePosition = transform.GetPositionVector();
-	radius *= transform.GetScalingVector().Length() / originScale.Length();
+	//radius *= newScale.GetScalingVector().Length() / originScale.Length();
+	transform = newTrans * Matrix4::Scale(Vector3(radius, radius, radius));
 }
 
 void BoundingSphere::Draw() const

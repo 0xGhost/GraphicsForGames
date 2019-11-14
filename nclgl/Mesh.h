@@ -24,6 +24,8 @@ public:
 	GLuint GetBumpMap() { return bumpTexture; }
 	void SetGlossMap(GLuint tex) { glossTexture = tex; }
 	GLuint GetGlossMap() { return glossTexture; }
+	Vector3* GetVertices() const { return vertices; }
+	GLuint GetNumVertices() const { return numVertices; }
 
 protected:
 	void BufferData();

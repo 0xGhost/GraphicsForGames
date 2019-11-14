@@ -1,8 +1,11 @@
 #include "Renderer.h"
 #include "../../nclgl/BoundingSphere.h"
+#include "../../nclgl/AABoundingBox.h"
 
 Renderer::Renderer(Window& parent) : OGLRenderer(parent)
 {
+	BoundingSphere::CreateSphereMesh();
+	BoundingBox::CreateBoxMesh();
 
 	camera = new Camera();
 	camera->SetPosition(Vector3(0, 100, 750));
@@ -12,7 +15,7 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent)
 	if (!currentShader->LinkProgram()) return;
 
 	quad = Mesh::GenerateQuad();
-	quad->SetTexture(SOIL_load_OGL_texture(TEXTUREDIR "Dva.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0));
+	quad->SetTexture(SOIL_load_OGL_texture(TEXTUREDIR"Dva.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0));
 	if (!quad->GetTexture()) return;
 
 	root = new SceneNode();
@@ -22,11 +25,31 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent)
 		s->SetTransform(Matrix4::Translation(Vector3(0, 100.0f, -300.0f + 100.0f + 100 * i)));
 		s->SetModelScale(Vector3(100.0f, 100.0f, 100.0f));
 		//s->SetBoundingRadius(100.0f);
-		s->SetBoundingVolume(new BoundingSphere(s->GetWorldTransform(), s->GetModelScale(), 100.0f));
+		s->SetBoundingVolume(new AABoundingBox(s->GetWorldTransform(), s->GetModelScale()));
+		//s->SetBoundingVolume(new BoundingSphere(s->GetWorldTransform(), s->GetModelScale(), 100.0f));
 		s->SetMesh(quad);
 		root->AddChild(s);
 	}
 
+	heightMap = new HeightMap(TEXTUREDIR "terrain.raw");
+	heightMap->SetTexture(SOIL_load_OGL_texture(
+		TEXTUREDIR "Barren Reds.JPG", SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS));
+	heightMap->SetBumpMap(SOIL_load_OGL_texture(
+		TEXTUREDIR "Barren RedsDOT3.JPG", SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS));
+	SetTextureRepeating(heightMap->GetTexture(), true);
+	SetTextureRepeating(heightMap->GetBumpMap(), true);
+	SceneNode* hm = new SceneNode();
+	hm->SetMesh(heightMap);
+	hm->SetColour(Vector4(1.0f, 1.0f, 1.0f, 0.5f));
+	hm->SetTransform(Matrix4::Translation(Vector3(0, 0, 0)));
+	hm->SetModelScale(Vector3(1.0f, 1.0f, 1.0f));
+	//s->SetBoundingRadius(100.0f);
+	hm->SetBoundingVolume(new AABoundingBox(hm->GetWorldTransform(), hm->GetModelScale()));
+	//hm->SetBoundingVolume(new BoundingSphere(hm->GetWorldTransform(), hm->GetModelScale(), 100.0f));
+	//root->AddChild(hm);
+	
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
@@ -39,6 +62,8 @@ Renderer::~Renderer()
 	delete root;
 	delete quad;
 	delete camera;
+	BoundingSphere::DeleteSphereMesh();
+	BoundingBox::DeleteBoxMesh();
 }
 
 void Renderer::UpdateScene(float msec)
@@ -79,12 +104,13 @@ void Renderer::BuildNodeLists(SceneNode* from)
 		{
 			nodeList.push_back(from);
 		}
+		for (vector<SceneNode*>::const_iterator i = from->GetChildIteratorStart(); i != from->GetChildIteratorEnd(); i++)
+		{
+			BuildNodeLists(*i);
+		}
 	}
 
-	for (vector<SceneNode*>::const_iterator i = from->GetChildIteratorStart(); i != from->GetChildIteratorEnd(); i++)
-	{
-		BuildNodeLists(*i);
-	}
+	
 }
 
 void Renderer::SortNodeLists()
@@ -128,8 +154,11 @@ void Renderer::DrawNode(SceneNode* n)
 		glUniform4fv(glGetUniformLocation(nodeShader->GetProgram(), "nodeColour"), 1, (float*)& n->GetColour());
 		glUniform1i(glGetUniformLocation(nodeShader->GetProgram(), "useTexture"), (int)n->GetMesh()->GetTexture());
 		n->Draw(*this);
-		glUniform1i(glGetUniformLocation(nodeShader->GetProgram(), "useTexture"), 0);
-
-		n->ShowBoundingVolume();
+	}
+	if (n->GetBoundingVolume())
+	{
+		//  TOD: replace "currentShader"
+		glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "modelMatrix"), 1, false, (float*)& n->GetBoundingVolume()->GetModelMatrix());
+		n->GetBoundingVolume()->Draw();
 	}
 }

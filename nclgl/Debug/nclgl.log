@@ -1,5 +1,2 @@
-﻿  Frustum.cpp
-  MD5Node.cpp
-  SceneNode.cpp
-  Generating Code...
+﻿  AABoundingBox.cpp
   nclgl.vcxproj -> C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Debug\nclgl.lib

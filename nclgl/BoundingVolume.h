@@ -3,6 +3,7 @@
 #include "Matrix4.h"
 #include "..\nclgl\OGLRenderer.h"
 #include "..\nclgl\OBJMesh.h"
+#include "..\nclgl\Shader.h"
 
 class BoundingVolume
 {
@@ -14,7 +15,10 @@ public:
 	virtual bool IsInPlane(Plane p) const = 0;
 	virtual void ExpendVolume(BoundingVolume* childBoundingVolume) = 0;
 	virtual Vector3 GetMaxDistancePointFromPosition(Vector3 position) const = 0;
-	virtual void Update(Matrix4 newTrans) { transform = newTrans; } // with Scale
+	virtual void GenerateBoundingVolume(const Mesh& m, Matrix4 modelMatrix) = 0;
+	virtual void Update(Matrix4 newTrans) { transform = newTrans; } // without scale
+	Matrix4 GetTransform() { return transform; }
+	virtual Matrix4 GetModelMatrix() const = 0;
 	//void SetCentrePosition(Vector3 newPosition) { centrePosition = newPosition; }
 	//void SetTransform(Matrix4 newTrans) { transform = newTrans; }
 

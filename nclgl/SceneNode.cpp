@@ -1,11 +1,12 @@
 #include "SceneNode.h"
 #include "BoundingSphere.h"
+#include "AABoundingBox.h"
 
 SceneNode::SceneNode(Mesh* m, Vector4 colour, Shader* s, GLuint t) 
 	: mesh(m), shader(s), texture(t), colour(colour), parent(NULL), modelScale(Vector3(1, 1, 1))
 {
 	if (t) mesh->SetTexture(t);
-	boundingVolume = new BoundingSphere(worldTransform, modelScale, 1.0f * modelScale.Length());
+	boundingVolume = new AABoundingBox(worldTransform, modelScale);
 	//boundingRadius = 1.0f;
 	distanceFromCamera = 0.0f;
 }
@@ -25,6 +26,7 @@ void SceneNode::AddChild(SceneNode* s)
 	if (s == this) return;
 	children.push_back(s);
 	s->parent = this;
+	boundingVolume->ExpendVolume(s->boundingVolume);
 }
 
 void SceneNode::DeleteChild(size_t index)
@@ -43,7 +45,8 @@ void SceneNode::Update(float msec)
 	{
 		worldTransform = transform;
 	}
-	boundingVolume->Update(worldTransform * Matrix4::Scale(modelScale));
+	boundingVolume->Update(worldTransform);
+	if (mesh) boundingVolume->GenerateBoundingVolume(*mesh, transform * Matrix4::Scale(modelScale));
 	//boundingVolume->SetCentrePosition(worldTransform.GetPositionVector());
 	size_t size = children.size();
 	for (size_t i = 0; i < size; i++)

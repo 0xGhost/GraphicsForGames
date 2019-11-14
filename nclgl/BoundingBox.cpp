@@ -1,23 +1,16 @@
 #include "BoundingBox.h"
 
+OBJMesh* BoundingBox::box = nullptr;
+
 bool BoundingBox::IsInPlane(Plane p) const
 {
 	for (int i = 0; i < MaxCornerNum; i++)
 	{
-		if(!p.PointInPlane(Vector3(*cornerGetter[i][0], *cornerGetter[i][1], *cornerGetter[i][2]))) return false;
+		Vector3 temp(*cornerGetter[i][0], *cornerGetter[i][1], *cornerGetter[i][2]);
+		temp += transform.GetPositionVector();
+		if(!p.PointInPlane(temp)) return false;
 	}
 	return true;
-}
-
-void BoundingBox::ExpendVolume(BoundingVolume* childBoundingVolume)
-{
-	Vector3 point = childBoundingVolume->GetMaxDistancePointFromPosition(transform.GetPositionVector());
-	maxCorner.x = max(maxCorner.x, point.x);
-	maxCorner.y = max(maxCorner.y, point.y);
-	maxCorner.z = max(maxCorner.z, point.z);
-	minCorner.x = min(minCorner.x, point.x);
-	minCorner.y = min(minCorner.y, point.y);
-	minCorner.z = min(minCorner.z, point.z);
 }
 
 Vector3 BoundingBox::GetMaxDistancePointFromPosition(Vector3 position) const
@@ -26,12 +19,25 @@ Vector3 BoundingBox::GetMaxDistancePointFromPosition(Vector3 position) const
 	int index = 0;
 	for (int i = 0; i < MaxCornerNum; i++)
 	{
-		float distance = (Vector3(*cornerGetter[i][0], *cornerGetter[i][1], *cornerGetter[i][2]) - position).Length();
+		Vector3 temp(*cornerGetter[i][0], *cornerGetter[i][1], *cornerGetter[i][2]);
+		temp += transform.GetPositionVector();
+
+		float distance = (temp - position).Length();
 		if (maxDistance < distance)
 		{
 			maxDistance = distance;
 			index = i;
 		}
 	}
-	return Vector3(*cornerGetter[index][0], *cornerGetter[index][1], *cornerGetter[index][2]);
+	Vector3 temp(*cornerGetter[index][0], *cornerGetter[index][1], *cornerGetter[index][2]);
+	temp += transform.GetPositionVector();
+	return temp;
+}
+
+void BoundingBox::Draw() const
+{
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	box->Draw();
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
