@@ -19,6 +19,8 @@ public:
 	virtual void RenderScene();
 	virtual void UpdateScene(float msec);
 
+	Window* GetWindow() { return window; }
+	
 protected:
 	void FillBuffers(); //G- Buffer Fill Render Pass
 	void DrawPointLights(); // Lighting Render Pass
@@ -32,6 +34,8 @@ protected:
 	void DrawNodes();
 	void DrawNode(SceneNode* n);
 
+	Shader* heightMapShader;
+	Shader* boundingVolumeShader;
 	Shader* sceneShader; // Shader to fill our GBuffers
 	Shader* pointlightShader; // Shader to calculate lighting
 	Shader* combineShader; // shader to stick it all together
@@ -59,6 +63,8 @@ protected:
 
 	vector<SceneNode*> transparentNodeList;
 	vector<SceneNode*> nodeList;
+
+	Window* window;
 };
 
 

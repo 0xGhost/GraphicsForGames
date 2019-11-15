@@ -2,7 +2,7 @@
 #include "../../nclgl/BoundingSphere.h"
 #include "../../nclgl/AABoundingBox.h"
 
-Renderer::Renderer(Window& parent) : OGLRenderer(parent)
+Renderer::Renderer(Window& parent) : OGLRenderer(parent), window(&parent)
 {
 	BoundingSphere::CreateSphereMesh();
 	BoundingBox::CreateBoxMesh();
@@ -11,48 +11,63 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent)
 	camera->SetPosition(Vector3(0, 100, 750));
 	projMatrix = Matrix4::Perspective(1, 10000, (float)width / (float)height, 45);
 
-	currentShader = new Shader(SHADERDIR"SceneVertex.glsl", SHADERDIR"SceneFragment.glsl");
-	if (!currentShader->LinkProgram()) return;
+	heightMapShader = new Shader(SHADERDIR"HeightMapVertex.glsl", SHADERDIR"TexturedFragment.glsl");
+	if (!heightMapShader->LinkProgram()) return;
+
+	boundingVolumeShader = new Shader(SHADERDIR"BoundingVolumeVertex.glsl", SHADERDIR"BoundingVolumeFragment.glsl");
+	if (!boundingVolumeShader->LinkProgram()) return;
+
+	sceneShader = new Shader(SHADERDIR"SceneVertex.glsl", SHADERDIR"SceneFragment.glsl");
+	if (!sceneShader->LinkProgram()) return;
 
 	quad = Mesh::GenerateQuad();
-	quad->SetTexture(SOIL_load_OGL_texture(TEXTUREDIR"Dva.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0));
+	quad->SetTexture(SOIL_load_OGL_texture(TEXTUREDIR"brick.tga", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0));
 	if (!quad->GetTexture()) return;
 
 	root = new SceneNode();
+	//root->SetBoundingVolume(new )
 	for (int i = 0; i < 5; ++i) {
 		SceneNode* s = new SceneNode();
 		s->SetColour(Vector4(1.0f, 1.0f, 1.0f, 0.5f));
 		s->SetTransform(Matrix4::Translation(Vector3(0, 100.0f, -300.0f + 100.0f + 100 * i)));
 		s->SetModelScale(Vector3(100.0f, 100.0f, 100.0f));
-		//s->SetBoundingRadius(100.0f);
-		s->SetBoundingVolume(new AABoundingBox(s->GetWorldTransform(), s->GetModelScale()));
-		//s->SetBoundingVolume(new BoundingSphere(s->GetWorldTransform(), s->GetModelScale(), 100.0f));
 		s->SetMesh(quad);
+		//s->SetBoundingRadius(100.0f);
+		s->SetBoundingVolume(new AABoundingBox(s->GetWorldTransform(), s->GetModelScale(), quad));
+		//s->SetBoundingVolume(new BoundingSphere(s->GetWorldTransform(), s->GetModelScale(), quad));
 		root->AddChild(s);
 	}
 
-	heightMap = new HeightMap(TEXTUREDIR "terrain.raw");
+	heightMap = new HeightMap(TEXTUREDIR"terrain.raw");
 	heightMap->SetTexture(SOIL_load_OGL_texture(
 		TEXTUREDIR "Barren Reds.JPG", SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS));
 	heightMap->SetBumpMap(SOIL_load_OGL_texture(
 		TEXTUREDIR "Barren RedsDOT3.JPG", SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS));
+	heightMap->SetGlossMap(SOIL_load_OGL_texture(TEXTUREDIR "glossMap.JPG",
+		SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS));
+
 	SetTextureRepeating(heightMap->GetTexture(), true);
 	SetTextureRepeating(heightMap->GetBumpMap(), true);
+	SetTextureRepeating(heightMap->GetGlossMap(), true);
+
 	SceneNode* hm = new SceneNode();
+	hm->SetShader(heightMapShader);
 	hm->SetMesh(heightMap);
 	hm->SetColour(Vector4(1.0f, 1.0f, 1.0f, 0.5f));
 	hm->SetTransform(Matrix4::Translation(Vector3(0, 0, 0)));
 	hm->SetModelScale(Vector3(1.0f, 1.0f, 1.0f));
 	//s->SetBoundingRadius(100.0f);
-	hm->SetBoundingVolume(new AABoundingBox(hm->GetWorldTransform(), hm->GetModelScale()));
+	hm->SetBoundingVolume(new AABoundingBox(hm->GetWorldTransform(), hm->GetModelScale(), heightMap));
 	//hm->SetBoundingVolume(new BoundingSphere(hm->GetWorldTransform(), hm->GetModelScale(), 100.0f));
-	//root->AddChild(hm);
+	root->AddChild(hm);
 	
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
+	//glEnable(GL_CULL_FACE);
+	//glCullFace(GL_FRONT);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	init = true;
 }
@@ -81,10 +96,10 @@ void Renderer::RenderScene()
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 	//glUseProgram(currentShader->GetProgram());
-	UpdateShaderMatrices();
+	//UpdateShaderMatrices();
 	//glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "diffuseTex"), 0);
 	DrawNodes();
-	glUseProgram(0);
+	//glUseProgram(0);
 	SwapBuffers();
 	ClearNodeLists();
 }
@@ -141,24 +156,37 @@ void Renderer::DrawNode(SceneNode* n)
 {
 	if (n->GetMesh())
 	{
+		/*
 		Shader* nodeShader = n->GetShader() != NULL ? n->GetShader() : currentShader;
 		if (nodeShader != currentShader)
 		{
 			int a = 0;
-		}
-		glUseProgram(nodeShader->GetProgram());
-		glUniform1i(glGetUniformLocation(nodeShader->GetProgram(), "diffuseTex"), 0);
-
+		}*/
+		SetCurrentShader(n->GetShader() != NULL ? n->GetShader() : sceneShader);
+		UpdateShaderMatrices();
+		glUniform1f(glGetUniformLocation(currentShader->GetProgram(), "time"), GetMS());
+		glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "diffuseTex"), 0);
+		//glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "bumpTex"), 1);
+		//glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "glossTex"), 7);
 		Matrix4 transform = n->GetWorldTransform() * Matrix4::Scale(n->GetModelScale());
-		glUniformMatrix4fv(glGetUniformLocation(nodeShader->GetProgram(), "modelMatrix"), 1, false, (float*)& transform);
-		glUniform4fv(glGetUniformLocation(nodeShader->GetProgram(), "nodeColour"), 1, (float*)& n->GetColour());
-		glUniform1i(glGetUniformLocation(nodeShader->GetProgram(), "useTexture"), (int)n->GetMesh()->GetTexture());
+		glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "modelMatrix"), 1, false, (float*)& transform);
+		glUniform4fv(glGetUniformLocation(currentShader->GetProgram(), "nodeColour"), 1, (float*)& n->GetColour());
+		glUniform3fv(glGetUniformLocation(currentShader->GetProgram(), "cameraPos"), 1, (float*)& camera->GetPosition());
+		glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "useTexture"), (int)n->GetMesh()->GetTexture());
+		
 		n->Draw(*this);
+		glUseProgram(0);
 	}
 	if (n->GetBoundingVolume())
 	{
-		//  TOD: replace "currentShader"
+		// TODO: replace "currentShader"
+		SetCurrentShader(boundingVolumeShader);
+
+		UpdateShaderMatrices();
 		glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "modelMatrix"), 1, false, (float*)& n->GetBoundingVolume()->GetModelMatrix());
+		glUniform4fv(glGetUniformLocation(currentShader->GetProgram(), "boundingVolumeColour"), 1, (float*)& Vector4(1,1,1,1));
+
 		n->GetBoundingVolume()->Draw();
+		glUseProgram(0);
 	}
 }

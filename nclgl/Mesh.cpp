@@ -71,6 +71,11 @@ void Mesh::Draw()
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
+/*
+void Mesh::Draw(const OGLRenderer& r)
+{
+	Draw();
+}*/
 
 void Mesh::GenerateNormals()
 {

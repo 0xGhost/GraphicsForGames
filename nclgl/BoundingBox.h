@@ -1,19 +1,6 @@
 #pragma once
 #include "BoundingVolume.h"
 
-enum BoxCorner {
-	BottomLeftNear,
-	BottomRightNear,
-	BottomRightFar,
-	BottomLeftFar,
-	TopLeftNear,
-	TopRightNear,
-	TopRightFar,
-	TopLeftFar,
-	MaxCornerNum
-};
-
-//typedef Vector3 (BoundingBox::*Vector3Function) ();
 
 class BoundingBox :
 	public BoundingVolume
@@ -25,7 +12,7 @@ public:
 	static void CreateBoxMesh()
 	{
 		OBJMesh* m = new OBJMesh();
-		m->LoadOBJMesh(MESHDIR"cube.obj");
+		m->LoadOBJMesh(MESHDIR"centeredcube.obj");
 		box = m;
 	}
 	static void DeleteBoxMesh() { delete box; }

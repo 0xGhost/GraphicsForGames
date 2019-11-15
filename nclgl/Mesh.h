@@ -11,6 +11,7 @@ class Mesh
 public:
 	Mesh();
 	~Mesh();
+	//virtual void Draw(const OGLRenderer& r);
 	virtual void Draw();
 	static Mesh* GenerateTriangle();
 	static Mesh* GenerateQuad(Vector3 position[4] = nullptr);

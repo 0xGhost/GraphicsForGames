@@ -6,7 +6,6 @@
 #include "Mesh.h"
 
 
-
 #define RAW_WIDTH 257
 #define RAW_HEIGHT 257
 
@@ -20,9 +19,9 @@ class HeightMap :
 	public Mesh
 {
 public:
-	HeightMap(std::string name);
+	HeightMap(std::string name = "");
 	~HeightMap(void) {};
-
+	void Draw();
 	void GenerateHeightMap(unsigned char* data = nullptr);
 };
 

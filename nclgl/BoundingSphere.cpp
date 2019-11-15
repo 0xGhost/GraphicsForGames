@@ -17,11 +17,29 @@ void BoundingSphere::ExpendVolume(BoundingVolume* childBoundingVolume)
 	radius = maxR;
 }
 
+void BoundingSphere::GenerateBoundingVolume(const Mesh& m, Matrix4 modelMatrix)
+{
+	modelMatrix.values[14] = 0;
+	modelMatrix.values[13] = 0;
+	modelMatrix.values[12] = 0;
+
+	int size = m.GetNumVertices();
+	Vector3* vertices = m.GetVertices();
+	radius = 0.0f;
+
+	for (int i = 1; i < size; i++)
+	{
+		Vector3& temp = vertices[i];
+		float length = (temp - centrePosition).Length();
+		radius = max(radius, length);
+	}
+	radius = radius * modelMatrix.GetScalingVector().Length();
+}
+
 void BoundingSphere::Update(Matrix4 newTrans)
 {
 	centrePosition = transform.GetPositionVector();
-	//radius *= newScale.GetScalingVector().Length() / originScale.Length();
-	transform = newTrans * Matrix4::Scale(Vector3(radius, radius, radius));
+	transform = newTrans;
 }
 
 void BoundingSphere::Draw() const
@@ -29,6 +47,11 @@ void BoundingSphere::Draw() const
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	sphere->Draw();
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+}
+
+Matrix4 BoundingSphere::GetModelMatrix() const
+{
+	return transform * Matrix4::Scale(Vector3(radius, radius, radius));
 }
 
 Vector3 BoundingSphere::GetMaxDistancePointFromPosition(Vector3 position) const

@@ -1,12 +1,12 @@
 #include "AABoundingBox.h"
 void AABoundingBox::ExpendVolume(BoundingVolume* childBoundingVolume)
 {
-	Vector3 pointA = childBoundingVolume->GetMaxDistancePointFromPosition(centre + minCorner) - centre - minCorner;
+	Vector3 pointA = childBoundingVolume->GetMaxDistancePointFromPosition(centre + minCorner) - centre;
 	maxCorner.x = max(maxCorner.x, pointA.x);
 	maxCorner.y = max(maxCorner.y, pointA.y);
 	maxCorner.z = max(maxCorner.z, pointA.z);
 
-	Vector3 pointB = childBoundingVolume->GetMaxDistancePointFromPosition(centre + maxCorner) - centre - maxCorner;
+	Vector3 pointB = childBoundingVolume->GetMaxDistancePointFromPosition(centre + maxCorner) - centre;
 	minCorner.x = min(minCorner.x, pointB.x);
 	minCorner.y = min(minCorner.y, pointB.y);
 	minCorner.z = min(minCorner.z, pointB.z);
@@ -25,7 +25,7 @@ void AABoundingBox::GenerateBoundingVolume(const Mesh& m, Matrix4 modelMatrix)
 
 	for (int i = 1; i < size; i++)
 	{
-		Vector3 temp = vertices[i];
+		Vector3& temp = vertices[i];
 		maxCorner.x = max(maxCorner.x, temp.x);
 		maxCorner.y = max(maxCorner.y, temp.y);
 		maxCorner.z = max(maxCorner.z, temp.z);
@@ -52,7 +52,7 @@ Matrix4 AABoundingBox::GetModelMatrix() const
 
 	result = result * Matrix4::Scale(Vector3(maxCorner.x - minCorner.x + 1,
 		maxCorner.y - minCorner.y + 1,
-		maxCorner.z - minCorner.z + 1));
+		maxCorner.z - minCorner.z + 1) / 2);
 	return result;
 }
 

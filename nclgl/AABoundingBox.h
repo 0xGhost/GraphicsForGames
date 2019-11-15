@@ -4,7 +4,15 @@ class AABoundingBox :
 	public BoundingBox
 {
 public:
-	AABoundingBox(Matrix4 t, Vector3 o) : BoundingBox(t, o) {}
+	AABoundingBox(Matrix4 t, Vector3 o, Mesh* m = nullptr) : BoundingBox(t, o) 
+	{ 
+		if (m) GenerateBoundingVolume(*m, t * Matrix4::Scale(o));
+		else
+		{
+			minCorner = Vector3(-1, -1, -1);
+			maxCorner = Vector3(1, 1, 1);
+		}
+	}
 	virtual void ExpendVolume(BoundingVolume* childBoundingVolume) override;
 	virtual void GenerateBoundingVolume(const Mesh& m, Matrix4 modelMatrix) override;
 	virtual void Update(Matrix4 newTrans) override { transform = newTrans; centre = transform.GetPositionVector(); } // without scale
@@ -15,7 +23,5 @@ public:
 
 protected:
 	Vector3 centre;
-	Vector3 minCorner;
-	Vector3 maxCorner;
 };
 

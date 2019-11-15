@@ -31,6 +31,7 @@ _-_-_-_-_-_-_-""  ""
 #include "Quaternion.h"
 #include "Matrix4.h"
 #include "Window.h"
+#include "GameTimer.h"
 #include "light.h"
 
 #include "Shader.h"		//Students make this file...
@@ -101,6 +102,9 @@ public:
 
 	bool			HasInitialised() const;	
 	
+	float GetMS() { return timer->GetMS(); }
+	float GetTimedMS() { return timer->GetTimedMS(); }
+
 	static void		DrawDebugLine  (DebugDrawMode mode, const Vector3 &from,const Vector3 &to,const Vector3 &fromColour = Vector3(1,1,1),const Vector3 &toColour = Vector3(1,1,1));
 	static void		DrawDebugBox   (DebugDrawMode mode, const Vector3 &at,const Vector3 &scale,const Vector3 &colour = Vector3(1,1,1));
 	static void		DrawDebugCross (DebugDrawMode mode, const Vector3 &at,const Vector3 &scale,const Vector3 &colour = Vector3(1,1,1));
@@ -141,6 +145,8 @@ protected:
 
 	HDC		deviceContext;	//...Device context?
 	HGLRC	renderContext;	//Permanent Rendering Context
+
+	GameTimer *timer;
 
 	static DebugDrawData* orthoDebugData;
 	static DebugDrawData* perspectiveDebugData;

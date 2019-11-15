@@ -26,7 +26,7 @@ void SceneNode::AddChild(SceneNode* s)
 	if (s == this) return;
 	children.push_back(s);
 	s->parent = this;
-	boundingVolume->ExpendVolume(s->boundingVolume);
+	//boundingVolume->ExpendVolume(s->boundingVolume);
 }
 
 void SceneNode::DeleteChild(size_t index)

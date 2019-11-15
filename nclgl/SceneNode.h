@@ -39,7 +39,7 @@ public:
 	//float GetBoundingRadius() const { return boundingRadius; }
 	//void SetBoundingRadius(float br) { boundingRadius = br; }
 	BoundingVolume* GetBoundingVolume() const { return boundingVolume; }
-	void SetBoundingVolume(BoundingVolume* bv) { boundingVolume = bv; }
+	void SetBoundingVolume(BoundingVolume* bv) { if (boundingVolume) delete boundingVolume; boundingVolume = bv; }
 	float GetCameraDistance() const { return distanceFromCamera; }
 	void SetCameraDistance(float dis) { distanceFromCamera = dis; }
 

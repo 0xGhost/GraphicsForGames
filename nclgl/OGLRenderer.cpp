@@ -35,6 +35,8 @@ OGLRenderer::OGLRenderer(Window& window) {
 	drawnDebugOrtho = false;
 	drawnDebugPerspective = false;
 
+	timer = window.GetTimer();
+
 	HWND windowHandle = window.GetHandle();
 
 	// Did We Get A Device Context?
