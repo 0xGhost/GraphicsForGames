@@ -5,6 +5,8 @@
 #include "..\nclgl\heightmap.h"
 #include "..\nclgl\SceneNode.h"
 #include "..\nclgl\Frustum.h"
+#include "../../nclgl/MD5Mesh.h"
+#include "../../nclgl/MD5Node.h"
 #include <algorithm>
 
 #define LIGHTNUM 8
@@ -19,14 +21,16 @@ public:
 	virtual void RenderScene();
 	virtual void UpdateScene(float msec);
 
+	void ToggleBoundingVolume() { showBoundingVolume = !showBoundingVolume; }
+
 	Window* GetWindow() { return window; }
-	
+
 protected:
 	void FillBuffers(); //G- Buffer Fill Render Pass
 	void DrawPointLights(); // Lighting Render Pass
 	void CombineBuffers(); // Combination Render Pass
 	// Make a new texture ...
-	void GenerateScreenTexture(GLuint& into, bool depth = false); 
+	void GenerateScreenTexture(GLuint& into, bool depth = false);
 
 	void BuildNodeLists(SceneNode* from);
 	void SortNodeLists();
@@ -39,19 +43,26 @@ protected:
 	Shader* sceneShader; // Shader to fill our GBuffers
 	Shader* pointlightShader; // Shader to calculate lighting
 	Shader* combineShader; // shader to stick it all together
+	Shader* processShader;
 
 	Light* pointLights; // Array of lighting data
 	Mesh* heightMap; // Terrain !
 	OBJMesh* sphere; // Light volume
 	Mesh* quad; // To draw a full - screen quad
 	Camera* camera; // Our usual camera
+	Camera* mapCamera;
+	Mesh* ppQuad1;
+	Mesh* ppQuad2;
 
 	float rotation; // How much to increase rotation by
-
+	GLuint processFBO;
 	GLuint bufferFBO; // FBO for our G- Buffer pass
-	GLuint bufferColourTex; // Albedo goes here
+	GLuint bufferFBO0; 
+	GLuint bufferColourTex[2]; // Albedo goes here
+	GLuint bufferColourTex0[2];
 	GLuint bufferNormalTex; // Normals go here
 	GLuint bufferDepthTex; // Depth goes here
+	GLuint bufferDepthTex0;
 
 	GLuint pointLightFBO; // FBO for our lighting pass
 	GLuint lightEmissiveTex; // Store emissive lighting
@@ -64,7 +75,13 @@ protected:
 	vector<SceneNode*> transparentNodeList;
 	vector<SceneNode*> nodeList;
 
+	bool showBoundingVolume;
+
 	Window* window;
+private:
+	inline void LoadHeightMap();
+	inline void LoadHellKnight();
+	inline void InitPostProcessing();
 };
 
 

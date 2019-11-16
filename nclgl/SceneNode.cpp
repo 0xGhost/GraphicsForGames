@@ -7,11 +7,13 @@ SceneNode::SceneNode(Mesh* m, Vector4 colour, Shader* s, GLuint t)
 {
 	if (t) mesh->SetTexture(t);
 	boundingVolume = new AABoundingBox(worldTransform, modelScale);
+	if (mesh) boundingVolume->GenerateBoundingVolume(*mesh, transform * Matrix4::Scale(modelScale));
 	//boundingRadius = 1.0f;
 	distanceFromCamera = 0.0f;
 }
 
 SceneNode::~SceneNode(void)
+
 {
 	for (size_t i = 0; i < children.size(); i++)
 	{
@@ -46,7 +48,6 @@ void SceneNode::Update(float msec)
 		worldTransform = transform;
 	}
 	boundingVolume->Update(worldTransform);
-	if (mesh) boundingVolume->GenerateBoundingVolume(*mesh, transform * Matrix4::Scale(modelScale));
 	//boundingVolume->SetCentrePosition(worldTransform.GetPositionVector());
 	size_t size = children.size();
 	for (size_t i = 0; i < size; i++)

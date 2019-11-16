@@ -1,12 +1,12 @@
 #include "AABoundingBox.h"
 void AABoundingBox::ExpendVolume(BoundingVolume* childBoundingVolume)
 {
-	Vector3 pointA = childBoundingVolume->GetMaxDistancePointFromPosition(centre + minCorner) - centre;
+	Vector3 pointA = childBoundingVolume->GetMaxDistancePointFromPosition(centre + minCorner);
 	maxCorner.x = max(maxCorner.x, pointA.x);
 	maxCorner.y = max(maxCorner.y, pointA.y);
 	maxCorner.z = max(maxCorner.z, pointA.z);
 
-	Vector3 pointB = childBoundingVolume->GetMaxDistancePointFromPosition(centre + maxCorner) - centre;
+	Vector3 pointB = childBoundingVolume->GetMaxDistancePointFromPosition(centre + maxCorner);
 	minCorner.x = min(minCorner.x, pointB.x);
 	minCorner.y = min(minCorner.y, pointB.y);
 	minCorner.z = min(minCorner.z, pointB.z);
@@ -19,6 +19,8 @@ void AABoundingBox::GenerateBoundingVolume(const Mesh& m, Matrix4 modelMatrix)
 	modelMatrix.values[12] = 0;
 
 	int size = m.GetNumVertices();
+	if (!size) 
+		return;
 	Vector3 *vertices = m.GetVertices();
 	minCorner = vertices[0];
 	maxCorner = vertices[0];

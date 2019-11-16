@@ -1,2 +1,6 @@
-﻿  Tutorial9.cpp
+﻿  Renderer.cpp
+C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\9) Skeletal Animation\Renderer.cpp(56,61): warning C4244:  'argument': conversion from 'int' to 'const float', possible loss of data
+  Tutorial9.cpp
+  Generating Code...
+C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\9) Skeletal Animation\Renderer.cpp(56,49): warning C4244:  'argument': conversion from 'int' to 'const float', possible loss of data
   Tutorial9.vcxproj -> C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Debug\Tutorial 09 - Skeletal Animation.exe

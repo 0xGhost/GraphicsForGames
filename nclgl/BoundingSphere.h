@@ -23,7 +23,7 @@ public:
 	static void CreateSphereMesh()
 	{
 		OBJMesh* m = new OBJMesh();
-		m->LoadOBJMesh(MESHDIR"sphere.obj");
+		m->LoadOBJMesh(MESHDIR"ico.obj");
 		sphere = m;
 	}
 	static void DeleteSphereMesh() { delete sphere; }

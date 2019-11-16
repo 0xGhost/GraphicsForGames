@@ -1,5 +1,5 @@
-﻿  SceneNode.cpp
-  Shader.cpp
-  Window.cpp
+﻿  Frustum.cpp
+  MD5Node.cpp
+  SceneNode.cpp
   Generating Code...
   nclgl.vcxproj -> C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Debug\nclgl.lib

@@ -26,14 +26,41 @@ void BoundingSphere::GenerateBoundingVolume(const Mesh& m, Matrix4 modelMatrix)
 	int size = m.GetNumVertices();
 	Vector3* vertices = m.GetVertices();
 	radius = 0.0f;
+	float maxX = 0.0f;
+	float maxY = 0.0f;
+	float maxZ = 0.0f;
+	int maxXIndex = 0;
+	int maxYIndex = 0;
+	int maxZIndex = 0;
 
 	for (int i = 1; i < size; i++)
 	{
-		Vector3& temp = vertices[i];
-		float length = (temp - centrePosition).Length();
-		radius = max(radius, length);
+		radius = max(radius, (modelMatrix * vertices[i]).Length());
 	}
-	radius = radius * modelMatrix.GetScalingVector().Length();
+	/*
+		Vector3& temp = vertices[i];
+
+		if (maxX < abs(temp.x))
+		{
+			maxXIndex = i;
+			maxX = abs(temp.x);
+		}
+		if (maxY < abs(temp.y))
+		{
+			maxXIndex = i;
+			maxY = abs(temp.y);
+		}
+		if (maxZ < abs(temp.z))
+		{
+			maxZIndex = i;
+			maxZ = abs(temp.z);
+		}
+	}
+	radius = max(vertices[maxXIndex].Length(), max(vertices[maxYIndex].Length(), vertices[maxZIndex].Length()));
+	/*
+	Vector3 maxVolume(maxX, maxY, maxZ);
+	maxVolume = modelMatrix * maxVolume;
+	radius = max(maxVolume.x, max(maxVolume.y, maxVolume.z));*/
 }
 
 void BoundingSphere::Update(Matrix4 newTrans)
@@ -57,6 +84,7 @@ Matrix4 BoundingSphere::GetModelMatrix() const
 Vector3 BoundingSphere::GetMaxDistancePointFromPosition(Vector3 position) const
 {
 	Vector3 v = centrePosition - position;
-	v = v * (v.Length() + radius) / v.Length();
-	return v;
+	float temp = (v.Length() + radius) / v.Length();
+	v = v * temp;
+	return v + centrePosition;
 }
