@@ -3,6 +3,7 @@
 uniform sampler2D diffuseTex;
 uniform samplerCube cubeTex;
 uniform sampler2D bumpTex;
+uniform sampler2D glossTex;
 
 uniform vec4 lightColour;
 uniform vec3 lightPos;

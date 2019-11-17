@@ -36,6 +36,8 @@ public:
 	void SetShader(Shader* s) { shader = s; }
 	GLuint GetTexture() const { return texture; }
 	void SetTexture(GLuint t) { texture = t; }
+	Matrix4 GetTextureMatrix() { return textureMatrix; }
+	void SetTextureMatrix(Matrix4 tm) { textureMatrix = tm; }
 	//float GetBoundingRadius() const { return boundingRadius; }
 	//void SetBoundingRadius(float br) { boundingRadius = br; }
 	BoundingVolume* GetBoundingVolume() const { return boundingVolume; }
@@ -57,10 +59,12 @@ protected:
 	GLuint texture;
 	Matrix4 worldTransform;
 	Matrix4 transform;
+	Matrix4 textureMatrix;
 	Vector3 modelScale;
 	Vector4 colour;
 	float distanceFromCamera;
 	BoundingVolume *boundingVolume;
 	std::vector<SceneNode*> children;
+
 };
 

@@ -7,22 +7,53 @@ uniform mat4 textureMatrix;
 uniform float time;
 
 in vec3 position;
-in vec4 color;
+in vec4 colour;
+in vec3 normal;
+in vec3 tangent;
 in vec2 texCoord;
 
 out Vertex{
-	vec4 color;
+	vec4 colour;
 	vec2 texCoord;
-	vec3 	normal;
-	vec3 	tangent;
-	vec3 	worldPos;
+	vec3 normal;
+	vec3 tangent;
+	vec3 binormal;
+	vec3 worldPos;
 } OUT;
 
 void main(void) {
+	OUT.colour = colour;
+	OUT.texCoord = (textureMatrix * vec4(texCoord, 0.0, 1.0)).xy;
+
+	mat3 normalMatrix = transpose(inverse(mat3(modelMatrix)));
+
+	OUT.normal = normalize(normalMatrix * normalize(normal));
+	OUT.tangent = normalize(normalMatrix * normalize(tangent));
+	OUT.binormal = normalize(normalMatrix * normalize(cross(normal, tangent)));
+
+
+	vec3 newPos = position;//
+	newPos.y = newPos.y * min(time, 10000) / 10000;//
+
+	OUT.worldPos = (modelMatrix * vec4(newPos, 1)).xyz;
+	gl_Position = (projMatrix * viewMatrix * modelMatrix) *
+		vec4(newPos, 1.0);
+
+
+
+
+
+
+
+
+
+
+/*
 	mat4 mvp = projMatrix * viewMatrix * modelMatrix;
 	vec3 newPos = position;
 	newPos.y = newPos.y * min(time, 10000) / 10000;
 	gl_Position = mvp * vec4(newPos, 1.0);
 	OUT.texCoord = (textureMatrix * vec4(texCoord, 0.0, 1.0)).xy;
 	OUT.color = color;
+*/
 }

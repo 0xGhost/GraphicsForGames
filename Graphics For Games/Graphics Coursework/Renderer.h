@@ -10,6 +10,7 @@
 #include <algorithm>
 
 #define LIGHTNUM 8
+#define POST_PASSES 2
 
 class Renderer :
 	public OGLRenderer
@@ -44,8 +45,13 @@ protected:
 	Shader* pointlightShader; // Shader to calculate lighting
 	Shader* combineShader; // shader to stick it all together
 	Shader* processShader;
+	Shader* skeletonShader;
+	Shader* textureShader;
+	Shader* reflectShader;
+	Shader* skyBoxShader;
 
-	Light* pointLights; // Array of lighting data
+	size_t numberOfLight;
+	Light** lights; // Array of lighting data
 	Mesh* heightMap; // Terrain !
 	OBJMesh* sphere; // Light volume
 	Mesh* quad; // To draw a full - screen quad
@@ -53,6 +59,9 @@ protected:
 	Camera* mapCamera;
 	Mesh* ppQuad1;
 	Mesh* ppQuad2;
+	Mesh* waterQuad;
+	float waterRotate;
+	GLuint skyBox;
 
 	float rotation; // How much to increase rotation by
 	GLuint processFBO;
@@ -79,9 +88,15 @@ protected:
 
 	Window* window;
 private:
-	inline void LoadHeightMap();
-	inline void LoadHellKnight();
+	inline SceneNode* LoadHeightMap();
+	inline SceneNode* LoadWater();
+	inline SceneNode* LoadHellKnight();
+	inline void LoadSkyBox();
+	inline void LoadLights();
 	inline void InitPostProcessing();
+	inline void DrawPostProcess();
+	inline void PresentScene();
+
 };
 
 

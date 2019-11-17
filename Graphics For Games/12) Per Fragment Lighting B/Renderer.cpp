@@ -35,7 +35,7 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent) {
 	for (int i = 0; i < 4; i++)
 		light[i] = new Light(Vector3((RAW_HEIGHT * HEIGHTMAP_X / 2.0f + offset * i),
 			2000.0f, (RAW_HEIGHT * HEIGHTMAP_Z / 2.0f + offset * i)),
-			colors[i][0], colors[i][1], DirectionLight, (RAW_WIDTH * HEIGHTMAP_X) / 2.0f, Vector3(0, -1, 0), 60.0f);
+			colors[i][0], colors[i][1], PointLight, (RAW_WIDTH * HEIGHTMAP_X) / 2.0f, Vector3(0, -1, 0), 60.0f);
 
 	projMatrix = Matrix4::Perspective(1.0f, 15000.0f,
 		(float)width / (float)height, 45.0f);
@@ -60,7 +60,7 @@ void Renderer::RenderScene() {
 	glUseProgram(currentShader->GetProgram());
 	glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "diffuseTex"), 0);
 	glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "bumpTex"), 1);
-	glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "glossTex"), 2);
+	glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "glossTex"), 7);
 	glUniform3fv(glGetUniformLocation(currentShader->GetProgram(), "cameraPos"), 1, (float*)& camera->GetPosition());
 
 	UpdateShaderMatrices();
