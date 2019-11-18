@@ -15,9 +15,11 @@ public:
 	}
 	virtual void ExpendVolume(BoundingVolume* childBoundingVolume) override;
 	virtual void GenerateBoundingVolume(const Mesh& m, Matrix4 modelMatrix) override;
-	virtual void Update(Matrix4 newTrans) override { transform = newTrans; centre = transform.GetPositionVector(); } // without scale
-	void SetCentre(Vector3 centre) { centre = centre; }
+	virtual void Update(Matrix4 newTrans) override { centre = transform.GetPositionVector(); transform = Matrix4::Translation(centre); } // without scale
+	void SetCentre(Vector3 centre) { centre = centre; transform = Matrix4::Translation(centre);
+	}
 	Vector3 GetCentre() const { return centre; }
+	void SetCorner(Vector3 min, Vector3 max) { minCorner = min; maxCorner = max; }
 	void Draw() const;
 	Matrix4 GetModelMatrix() const override;
 

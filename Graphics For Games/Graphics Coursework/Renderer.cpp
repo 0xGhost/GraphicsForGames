@@ -17,8 +17,24 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent), window(&parent), showB
 	sceneShader = new Shader(SHADERDIR"BumpVertex.glsl", SHADERDIR"BumpFragment.glsl");
 	if (!sceneShader->LinkProgram()) return;
 
+	//sceneShader = new Shader(SHADERDIR"shadowscenevert.glsl",
+		//SHADERDIR"shadowscenefrag.glsl");
+	//shadowShader = new Shader(SHADERDIR"shadowVert.glsl",
+		//SHADERDIR"shadowFrag.glsl");
+
+	if (!sceneShader->LinkProgram())// || !shadowShader->LinkProgram())
+	{
+		return;
+	}
+
 	textureShader = new Shader(SHADERDIR"TexturedVertex.glsl", SHADERDIR"TexturedFragment.glsl");
 	if (!textureShader->LinkProgram()) return;
+
+	skyBoxShader = new Shader(SHADERDIR "skyboxVertex.glsl",
+		SHADERDIR "skyboxFragment.glsl");
+	if (!skyBoxShader->LinkProgram()) return;
+
+	skyBoxQuad = Mesh::GenerateQuad();
 
 	quad = Mesh::GenerateQuad();
 	quad->SetTexture(SOIL_load_OGL_texture(TEXTUREDIR"brick.tga", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0));
@@ -29,7 +45,8 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent), window(&parent), showB
 	for (int i = 0; i < 5; ++i) {
 		SceneNode* s = new SceneNode();
 		s->SetColour(Vector4(1.0f, 1.0f, 1.0f, 0.5f));
-		s->SetTransform(Matrix4::Translation(Vector3(0, 100.0f, -300.0f + 100.0f + 100 * i)));
+		s->SetTransform(Matrix4::Translation(Vector3(0, 100.0f, -300.0f + 100.0f + 100 * i))
+			* Matrix4::Rotation(45, Vector3(1.0f, 0.0f, 0.0f)));
 		s->SetModelScale(Vector3(100.0f, 100.0f, 100.0f));
 		s->SetMesh(quad);
 		
@@ -39,21 +56,22 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent), window(&parent), showB
 	}
 
 	LoadLights();
+	LoadSkyBox();
 
-	SceneNode* heightMap = LoadHeightMap();
-	SceneNode* hellKnight = LoadHellKnight();
-	SceneNode* water = LoadWater();
-	root->AddChild(heightMap);
+	heightMapNode = LoadHeightMap();
+	hellKnightNode = LoadHellKnight();
+	waterNode = LoadWater();
+	root->AddChild(heightMapNode);
 
-	heightMap->AddChild(hellKnight);
-	heightMap->AddChild(water);
+	heightMapNode->AddChild(hellKnightNode);
+	heightMapNode->AddChild(waterNode);
 
 	InitPostProcessing();
 	
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 	//glCullFace(GL_FRONT);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
@@ -90,19 +108,24 @@ void Renderer::UpdateScene(float msec)
 	viewMatrix = camera->BuildViewMatrix();
 	frameFrustum.FromMatrix(projMatrix * viewMatrix);
 	root->Update(msec);
+	waterRotate = msec / 1000.0f;
+	waterNode->SetTextureMatrix(waterNode->GetTextureMatrix() * Matrix4::Rotation(waterRotate, Vector3(0.0f, 0.0f, 1.0f)));
 }
 
 void Renderer::RenderScene()
 {
+
 	BuildNodeLists(root);
 	SortNodeLists();
 
 	// draw scene to FBO
 	glBindFramebuffer(GL_FRAMEBUFFER, bufferFBO);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	SetCurrentShader(sceneShader);
+	DrawSkybox();
 	projMatrix = Matrix4::Perspective(1.0f, 10000.0f, (float)width / (float)height, 45.0f);
+	SetCurrentShader(sceneShader);
 	UpdateShaderMatrices();
+	
 	DrawNodes();
 	
 	// draw map from mapCamera to FBO0
@@ -112,12 +135,13 @@ void Renderer::RenderScene()
 	glBindFramebuffer(GL_FRAMEBUFFER, bufferFBO0);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	SetCurrentShader(sceneShader);
-	projMatrix = Matrix4::Perspective(1.0f, 10000.0f, (float)width / (float)height, 45.0f);
+	projMatrix = Matrix4::Perspective(1.0f, 100000.0f, (float)width / (float)height, 45.0f);
 	UpdateShaderMatrices();
 	DrawNodes();
 	showBoundingVolume = temp;
 
 	DrawPostProcess();
+	
 	PresentScene();
 	SwapBuffers();
 	ClearNodeLists();
@@ -185,6 +209,10 @@ void Renderer::DrawNode(SceneNode* n)
 		glUniform1f(glGetUniformLocation(currentShader->GetProgram(), "time"), GetMS());
 		glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "diffuseTex"), 0);
 		glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "bumpTex"), 1);
+		glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "cubeTex"), 2);
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox);
+		//glActiveTexture(0);
 		glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "glossTex"), 7);
 		Matrix4 transform = n->GetWorldTransform() * Matrix4::Scale(n->GetModelScale());
 		glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "modelMatrix"), 1, false, (float*)& transform);
@@ -269,19 +297,18 @@ inline SceneNode* Renderer::LoadWater()
 	float heightY = 256 * HEIGHTMAP_Y / 3.0f;
 	float heightZ = (RAW_HEIGHT * HEIGHTMAP_Z / 2.0f);
 	waterNode->SetTransform(Matrix4::Translation(Vector3(heightX, heightY, heightZ)) *
-		Matrix4::Scale(Vector3(heightX, 1, heightZ)) *
-		Matrix4::Rotation(90, Vector3(1.0f, 0.0f, 0.0f)));
+		Matrix4::Scale(Vector3(heightX, 1.0f, heightZ)) * Matrix4::Rotation(90, Vector3(1.0f, 0.0f, 0.0f)));
+	waterNode->SetTextureMatrix(Matrix4::Scale(Vector3(10.0f, 10.0f, 10.0f)));// *
+		//Matrix4::Rotation(waterRotate, Vector3(0.0f, 0.0f, 1.0f)));
 
-	waterNode->SetModelScale(Vector3(1.0f, 1.0f, 1.0f));
-	waterNode->SetBoundingVolume(new AABoundingBox(waterNode->GetWorldTransform(), waterNode->GetModelScale(), waterQuad));
+	waterNode->SetBoundingVolume(
+		new AABoundingBox(Matrix4::Translation(Vector3(heightX, heightY, heightZ)), waterNode->GetModelScale(), waterQuad));
 	//hm->SetBoundingVolume(new BoundingSphere(hm->GetWorldTransform(), hm->GetModelScale(), 100.0f));
 	return waterNode;
 }
 
 inline void Renderer::LoadSkyBox()
 {
-	skyBoxShader = new Shader(SHADERDIR "skyboxVertex.glsl",
-		SHADERDIR "skyboxFragment.glsl");
 	skyBox = SOIL_load_OGL_cubemap(
 		TEXTUREDIR"rusted_west.jpg", TEXTUREDIR"rusted_east.jpg",
 		TEXTUREDIR"rusted_up.jpg", TEXTUREDIR"rusted_down.jpg",
@@ -296,7 +323,7 @@ inline void Renderer::LoadSkyBox()
 inline SceneNode* Renderer::LoadHellKnight()
 {
 #ifdef MD5_USE_HARDWARE_SKINNING
-	skeletonShader = new Shader(SHADERDIR"skeletonVertex.glsl", SHADERDIR"skeletonFragment.glsl");
+	skeletonShader = new Shader(SHADERDIR"skeletonVertex.glsl", SHADERDIR"bumpFragment.glsl");
 #else
 	//currentShader = new Shader(SHADERDIR"TexturedVertex.glsl", SHADERDIR"TexturedFragment.glsl");
 #endif
@@ -304,7 +331,13 @@ inline SceneNode* Renderer::LoadHellKnight()
 	MD5FileData* hellData = new MD5FileData(MESHDIR"hellknight.md5mesh");
 
 	MD5Node* hellNode = new MD5Node(*hellData);
-	hellNode->GetBoundingVolume();
+
+	hellNode->SetTransform(Matrix4::Translation(Vector3(2000, 200, 2000)));
+
+	AABoundingBox *aabb = new AABoundingBox(Matrix4(), Vector3());
+	aabb->SetCorner(Vector3(-50, 0, -50), Vector3(50, 150, 50));
+	aabb->SetCentre(hellNode->GetWorldTransform().GetPositionVector());
+	hellNode->SetBoundingVolume(aabb);
 	
 	hellNode->SetShader(skeletonShader);
 	if (!hellNode->GetShader()->LinkProgram())
@@ -425,6 +458,7 @@ void Renderer::DrawPostProcess()
 	SetCurrentShader(processShader);
 	projMatrix = Matrix4::Orthographic(-1, 1, 1, -1, -1, 1);
 	viewMatrix.ToIdentity();
+	textureMatrix.ToIdentity();
 	UpdateShaderMatrices();
 
 	glDisable(GL_DEPTH_TEST);
@@ -469,3 +503,24 @@ void Renderer::PresentScene()
 
 
 }
+
+void Renderer::DrawSkybox()
+{
+	glDepthMask(GL_FALSE);
+	glDisable(GL_CULL_FACE);
+	//glEnable(GL_STENCIL_TEST);
+	SetCurrentShader(skyBoxShader);
+	//glUniform3fv(glGetUniformLocation(currentShader->GetProgram(), "cameraPos"), 1, (float*)& camera->GetPosition());
+	
+	//glActiveTexture(GL_TEXTURE2);
+	//glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox);
+	//glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "cubeTex"), 2);
+	UpdateShaderMatrices();
+	skyBoxQuad->Draw();
+
+	glUseProgram(0);
+	glDepthMask(GL_TRUE);
+	glEnable(GL_CULL_FACE);
+	//glDisable(GL_STENCIL_TEST);
+}
+

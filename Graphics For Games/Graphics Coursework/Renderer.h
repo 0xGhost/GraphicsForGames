@@ -50,11 +50,17 @@ protected:
 	Shader* reflectShader;
 	Shader* skyBoxShader;
 
+
+	SceneNode* heightMapNode;
+	SceneNode* hellKnightNode;
+	SceneNode* waterNode;
+
 	size_t numberOfLight;
 	Light** lights; // Array of lighting data
 	Mesh* heightMap; // Terrain !
 	OBJMesh* sphere; // Light volume
 	Mesh* quad; // To draw a full - screen quad
+	Mesh* skyBoxQuad;
 	Camera* camera; // Our usual camera
 	Camera* mapCamera;
 	Mesh* ppQuad1;
@@ -96,7 +102,7 @@ private:
 	inline void InitPostProcessing();
 	inline void DrawPostProcess();
 	inline void PresentScene();
-
+	inline void DrawSkybox();
 };
 
 

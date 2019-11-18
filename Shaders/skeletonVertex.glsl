@@ -19,10 +19,11 @@ layout(location = 10) in vec2 weighting;
 //			target->weights[j].y = subMesh.verts[j].weightIndex;
 
 out Vertex	{
-	vec4 	color;
+	vec4 	colour;
 	vec2 	texCoord;
 	vec3 	normal;
 	vec3 	tangent;
+	vec3	binormal;
 	vec3 	worldPos;
 } OUT;
 
@@ -68,12 +69,12 @@ void main(void)	{
 	mat3 normalMatrix = transpose(mat3(modelMatrix));
 	
 	//vertPos.w = 1.0f;
-	
+
 	OUT.worldPos 	= (modelMatrix * vec4(vertPos.xyz, 1.0)).xyz;
 	OUT.texCoord 	= texCoord;
-	
+	OUT.binormal = normalize(normalMatrix * normalize(cross(normal, tangent)));
 	OUT.normal 		= normalMatrix * normalize(oNormal);
 	OUT.tangent 	= normalMatrix * normalize(oTangent);
-	OUT.color = color;
+	OUT.colour = color;
 	gl_Position		= (projMatrix * viewMatrix * modelMatrix) * vec4(vertPos.xyz, 1.0);
 }

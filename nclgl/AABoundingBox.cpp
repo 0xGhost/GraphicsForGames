@@ -19,15 +19,14 @@ void AABoundingBox::GenerateBoundingVolume(const Mesh& m, Matrix4 modelMatrix)
 	modelMatrix.values[12] = 0;
 
 	int size = m.GetNumVertices();
-	if (!size) 
-		return;
 	Vector3 *vertices = m.GetVertices();
+	if (!vertices) return;
 	minCorner = vertices[0];
 	maxCorner = vertices[0];
 
 	for (int i = 1; i < size; i++)
 	{
-		Vector3& temp = vertices[i];
+		Vector3 temp = modelMatrix * vertices[i];
 		maxCorner.x = max(maxCorner.x, temp.x);
 		maxCorner.y = max(maxCorner.y, temp.y);
 		maxCorner.z = max(maxCorner.z, temp.z);
@@ -35,8 +34,8 @@ void AABoundingBox::GenerateBoundingVolume(const Mesh& m, Matrix4 modelMatrix)
 		minCorner.y = min(minCorner.y, temp.y);
 		minCorner.z = min(minCorner.z, temp.z);
 	}
-	maxCorner = modelMatrix * maxCorner;
-	minCorner = modelMatrix * minCorner;
+	//maxCorner = modelMatrix * maxCorner;
+	//minCorner = modelMatrix * minCorner;
 }
 
 void AABoundingBox::Draw() const

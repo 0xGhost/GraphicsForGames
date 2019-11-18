@@ -1,3 +1,5 @@
 ﻿  Renderer.cpp
+  tutorial14.cpp
+  Generating Code...
 C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\14) Shadow Mapping\Renderer.cpp(7,82): warning C4305:  'argument': truncation from 'double' to 'const float'
   tutorial14.vcxproj -> C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Debug\Tutorial 14 - Shadow Mapping.exe

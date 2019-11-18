@@ -23,7 +23,18 @@ public:
 	std::vector<SceneNode*>::const_iterator GetChildIteratorStart() { return children.begin(); }
 	std::vector<SceneNode*>::const_iterator GetChildIteratorEnd() { return children.end(); }
 
-	void SetTransform(const Matrix4& matrix) { transform = matrix; }
+	void SetTransform(const Matrix4& matrix) 
+	{ 
+		transform = matrix; 
+		if (parent)
+		{
+			worldTransform = parent->worldTransform * transform;
+		}
+		else
+		{
+			worldTransform = transform;
+		}
+	}
 	const Matrix4& GetTransform() const { return transform; }
 	Matrix4 GetWorldTransform() const { return worldTransform; }
 	Vector4 GetColour() const { return colour; }
@@ -56,6 +67,7 @@ protected:
 	SceneNode* parent;
 	Mesh* mesh;
 	Shader* shader;
+
 	GLuint texture;
 	Matrix4 worldTransform;
 	Matrix4 transform;
