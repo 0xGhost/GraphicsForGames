@@ -18,5 +18,5 @@ void main(void){
 	{
 		discard;
 	}
-	fragColor = mix(texture(diffuseTex, IN.texCoord), IN.color, 0.1);
+	fragColor = mix(texture(diffuseTex, IN.texCoord), IN.color, 0.0);
 }

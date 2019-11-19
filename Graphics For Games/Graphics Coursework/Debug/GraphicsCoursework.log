@@ -1,2 +1,4 @@
 ﻿  Renderer.cpp
+C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Graphics Coursework\Renderer.cpp(48,13): warning C4156:  deletion of an array expression without using the array form of 'delete'; array form substituted
+C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Graphics Coursework\Renderer.cpp(48,13): warning C4154:  deletion of an array expression; conversion to pointer supplied
   GraphicsCoursework.vcxproj -> C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Debug\GraphicsCoursework.exe

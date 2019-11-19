@@ -3,6 +3,7 @@
 uniform vec2 pixelSize;
 uniform int isVertical;
 uniform sampler2D diffuseTex;
+uniform float offsetNum;
 
 in Vertex
 {

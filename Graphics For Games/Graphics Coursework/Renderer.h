@@ -58,7 +58,7 @@ protected:
 	size_t numberOfLight;
 	Light** lights; // Array of lighting data
 	Mesh* heightMap; // Terrain !
-	OBJMesh* sphere; // Light volume
+	OBJMesh* sphere; 
 	Mesh* quad; // To draw a full - screen quad
 	Mesh* skyBoxQuad;
 	Camera* camera; // Our usual camera
@@ -67,7 +67,10 @@ protected:
 	Mesh* ppQuad2;
 	Mesh* waterQuad;
 	float waterRotate;
-	GLuint skyBox;
+	GLuint skyBox1;
+	GLuint skyBox2;
+
+	Matrix4 perspectiveMatrix = Matrix4::Perspective(1, 20000, (float)width / (float)height, 45);
 
 	float rotation; // How much to increase rotation by
 	GLuint processFBO;
@@ -83,17 +86,21 @@ protected:
 	GLuint lightEmissiveTex; // Store emissive lighting
 	GLuint lightSpecularTex; // Store specular lighting
 
-	SceneNode* root;
-
+	SceneNode* root[2];
+	
 	Frustum frameFrustum;
 
 	vector<SceneNode*> transparentNodeList;
 	vector<SceneNode*> nodeList;
 
 	bool showBoundingVolume;
+	bool showPostProcessing;
+	int sceneNum;
 
 	Window* window;
 private:
+	inline void InitScene0();
+	inline void InitScene1();
 	inline SceneNode* LoadHeightMap();
 	inline SceneNode* LoadWater();
 	inline SceneNode* LoadHellKnight();

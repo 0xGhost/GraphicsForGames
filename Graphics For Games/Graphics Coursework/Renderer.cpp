@@ -7,71 +7,36 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent), window(&parent), showB
 	BoundingSphere::CreateSphereMesh();
 	BoundingBox::CreateBoxMesh();
 
-	camera = new Camera();
-	camera->SetPosition(Vector3(0, 100, 750));
-	projMatrix = Matrix4::Perspective(1, 10000, (float)width / (float)height, 45);
 
+	skyBoxQuad = Mesh::GenerateQuad();
+
+	quad = Mesh::GenerateQuad();
+	sphere = new OBJMesh();
+	if (!sphere->LoadOBJMesh(MESHDIR "sphere.obj"))
+	{
+		return;
+	}
+
+	camera = new Camera();
 	boundingVolumeShader = new Shader(SHADERDIR"BoundingVolumeVertex.glsl", SHADERDIR"BoundingVolumeFragment.glsl");
 	if (!boundingVolumeShader->LinkProgram()) return;
 
 	sceneShader = new Shader(SHADERDIR"BumpVertex.glsl", SHADERDIR"BumpFragment.glsl");
 	if (!sceneShader->LinkProgram()) return;
 
-	//sceneShader = new Shader(SHADERDIR"shadowscenevert.glsl",
-		//SHADERDIR"shadowscenefrag.glsl");
-	//shadowShader = new Shader(SHADERDIR"shadowVert.glsl",
-		//SHADERDIR"shadowFrag.glsl");
-
-	if (!sceneShader->LinkProgram())// || !shadowShader->LinkProgram())
-	{
-		return;
-	}
-
-	textureShader = new Shader(SHADERDIR"TexturedVertex.glsl", SHADERDIR"TexturedFragment.glsl");
-	if (!textureShader->LinkProgram()) return;
-
-	skyBoxShader = new Shader(SHADERDIR "skyboxVertex.glsl",
-		SHADERDIR "skyboxFragment.glsl");
+	skyBoxShader = new Shader(SHADERDIR "skyboxVertex.glsl", SHADERDIR "skyboxFragment.glsl");
 	if (!skyBoxShader->LinkProgram()) return;
-
-	skyBoxQuad = Mesh::GenerateQuad();
-
-	quad = Mesh::GenerateQuad();
-	quad->SetTexture(SOIL_load_OGL_texture(TEXTUREDIR"brick.tga", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0));
-	if (!quad->GetTexture()) return;
-
-	root = new SceneNode();
-	//root->SetBoundingVolume(new )
-	for (int i = 0; i < 5; ++i) {
-		SceneNode* s = new SceneNode();
-		s->SetColour(Vector4(1.0f, 1.0f, 1.0f, 0.5f));
-		s->SetTransform(Matrix4::Translation(Vector3(0, 100.0f, -300.0f + 100.0f + 100 * i))
-			* Matrix4::Rotation(45, Vector3(1.0f, 0.0f, 0.0f)));
-		s->SetModelScale(Vector3(100.0f, 100.0f, 100.0f));
-		s->SetMesh(quad);
-		
-		s->SetBoundingVolume(new AABoundingBox(s->GetWorldTransform(), s->GetModelScale(), quad));
-		//s->SetBoundingVolume(new BoundingSphere(s->GetWorldTransform(), s->GetModelScale(), quad));
-		root->AddChild(s);
-	}
-
-	LoadLights();
 	LoadSkyBox();
 
-	heightMapNode = LoadHeightMap();
-	hellKnightNode = LoadHellKnight();
-	waterNode = LoadWater();
-	root->AddChild(heightMapNode);
-
-	heightMapNode->AddChild(hellKnightNode);
-	heightMapNode->AddChild(waterNode);
+	InitScene0();
+	sceneNum = 0;
 
 	InitPostProcessing();
-	
+	showPostProcessing = false;
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
-	//glEnable(GL_CULL_FACE);
+	glEnable(GL_CULL_FACE);
 	//glCullFace(GL_FRONT);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
@@ -103,11 +68,11 @@ Renderer::~Renderer()
 
 void Renderer::UpdateScene(float msec)
 {
-	projMatrix = Matrix4::Perspective(1, 10000, (float)width / (float)height, 45);
+	projMatrix = perspectiveMatrix;
 	camera->UpdateCamera(msec);
 	viewMatrix = camera->BuildViewMatrix();
 	frameFrustum.FromMatrix(projMatrix * viewMatrix);
-	root->Update(msec);
+	root[sceneNum]->Update(msec);
 	waterRotate = msec / 1000.0f;
 	waterNode->SetTextureMatrix(waterNode->GetTextureMatrix() * Matrix4::Rotation(waterRotate, Vector3(0.0f, 0.0f, 1.0f)));
 }
@@ -115,34 +80,35 @@ void Renderer::UpdateScene(float msec)
 void Renderer::RenderScene()
 {
 
-	BuildNodeLists(root);
+	BuildNodeLists(root[sceneNum]);
 	SortNodeLists();
 
-	// draw scene to FBO
-	glBindFramebuffer(GL_FRAMEBUFFER, bufferFBO);
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	DrawSkybox();
-	projMatrix = Matrix4::Perspective(1.0f, 10000.0f, (float)width / (float)height, 45.0f);
-	SetCurrentShader(sceneShader);
-	UpdateShaderMatrices();
-	
-	DrawNodes();
-	
-	// draw map from mapCamera to FBO0
-	bool temp = showBoundingVolume;
-	showBoundingVolume = false;
-	viewMatrix = mapCamera->BuildViewMatrix();
-	glBindFramebuffer(GL_FRAMEBUFFER, bufferFBO0);
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	SetCurrentShader(sceneShader);
-	projMatrix = Matrix4::Perspective(1.0f, 100000.0f, (float)width / (float)height, 45.0f);
-	UpdateShaderMatrices();
-	DrawNodes();
-	showBoundingVolume = temp;
 
-	DrawPostProcess();
-	
-	PresentScene();
+		// draw scene to FBO
+		glBindFramebuffer(GL_FRAMEBUFFER, bufferFBO);
+		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		projMatrix = perspectiveMatrix;
+		SetCurrentShader(sceneShader);
+		UpdateShaderMatrices();
+		DrawNodes();
+		DrawSkybox();
+
+		// draw map from mapCamera to FBO0
+		bool temp = showBoundingVolume;
+		showBoundingVolume = false;
+		viewMatrix = mapCamera->BuildViewMatrix();
+		glBindFramebuffer(GL_FRAMEBUFFER, bufferFBO0);
+		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		SetCurrentShader(sceneShader);
+		projMatrix = perspectiveMatrix;
+		UpdateShaderMatrices();
+		DrawNodes();
+		showBoundingVolume = temp;
+
+		DrawPostProcess();
+
+		PresentScene();
+
 	SwapBuffers();
 	ClearNodeLists();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -198,6 +164,10 @@ void Renderer::DrawNodes()
 
 void Renderer::DrawNode(SceneNode* n)
 {
+	glEnable(GL_STENCIL_TEST);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glStencilFunc(GL_ALWAYS, 2, ~0);
+	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
 	if (n->GetMesh())
 	{
 		SetCurrentShader(n->GetShader() != NULL ? n->GetShader() : sceneShader);
@@ -206,12 +176,17 @@ void Renderer::DrawNode(SceneNode* n)
 		textureMatrix = n->GetTextureMatrix();	
 			
 		UpdateShaderMatrices();
+		
+
 		glUniform1f(glGetUniformLocation(currentShader->GetProgram(), "time"), GetMS());
 		glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "diffuseTex"), 0);
 		glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "bumpTex"), 1);
 		glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "cubeTex"), 2);
 		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox1);
+		glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "cubeTex2"), 3);
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox2);
 		//glActiveTexture(0);
 		glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "glossTex"), 7);
 		Matrix4 transform = n->GetWorldTransform() * Matrix4::Scale(n->GetModelScale());
@@ -223,12 +198,15 @@ void Renderer::DrawNode(SceneNode* n)
 		SetShaderLight(*lights);
 		n->Draw(*this);
 		modelMatrix = temp;
+
+		
 		glUseProgram(0);
 	}
 
 	if (n->GetBoundingVolume() && showBoundingVolume)
 	{
 		glDisable(GL_CULL_FACE);
+
 		SetCurrentShader(boundingVolumeShader);
 		BoundingVolume *bv = n->GetBoundingVolume();
 		UpdateShaderMatrices();
@@ -239,6 +217,73 @@ void Renderer::DrawNode(SceneNode* n)
 		glUseProgram(0);
 		glEnable(GL_CULL_FACE);
 	}
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glStencilFunc(GL_NOTEQUAL, 2, ~0);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+	glDisable(GL_STENCIL_TEST);
+}
+
+inline void Renderer::InitScene0()
+{
+	camera->SetPosition(Vector3(0, 100, 750));
+	projMatrix = perspectiveMatrix;
+
+	textureShader = new Shader(SHADERDIR"TexturedVertex.glsl", SHADERDIR"TexturedFragment.glsl");
+	if (!textureShader->LinkProgram()) return;
+
+
+
+	
+	quad->SetTexture(SOIL_load_OGL_texture(TEXTUREDIR"brick.tga", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0));
+	if (!quad->GetTexture()) return;
+	quad->SetBumpMap(SOIL_load_OGL_texture(TEXTUREDIR"brickDOT3.tga", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0));
+
+	root[0] = new SceneNode();
+	//root->SetBoundingVolume(new )
+	for (int i = 0; i < 5; ++i) {
+		SceneNode* s = new SceneNode();
+		s->SetColour(Vector4(1.0f, 1.0f, 1.0f, 0.5f));
+		s->SetTransform(Matrix4::Translation(Vector3(1000, 1500.0f, 2000.0f + 100.0f + 500 * i))
+			* Matrix4::Rotation(45, Vector3(1.0f, 0.0f, 0.0f)));
+		s->SetModelScale(Vector3(100.0f, 100.0f, 100.0f));
+		s->SetMesh(quad);
+
+		s->SetBoundingVolume(new AABoundingBox(s->GetWorldTransform(), s->GetModelScale(), quad));
+		//s->SetBoundingVolume(new BoundingSphere(s->GetWorldTransform(), s->GetModelScale(), quad));
+		root[0]->AddChild(s);
+	}
+
+	// portal
+	SceneNode* p = new SceneNode();
+	p->SetColour(Vector4(1.0f, 1.0f, 1.0f, 0.5f));
+	p->SetTransform(Matrix4::Translation(Vector3(4000, 1000.0f, 4000.0f)));
+	p->SetModelScale(Vector3(200.0f, 200.0f, 200.0f));
+	p->SetMesh(sphere);
+	Shader* portalShader = new Shader(SHADERDIR"portalVertex.glsl", SHADERDIR"portalFragment.glsl");
+	if (!portalShader->LinkProgram()) return;
+	p->SetShader(portalShader);
+	p->SetBoundingVolume(new AABoundingBox(p->GetWorldTransform(), p->GetModelScale(), sphere));
+	//s->SetBoundingVolume(new BoundingSphere(s->GetWorldTransform(), s->GetModelScale(), quad));
+	root[0]->AddChild(p);
+
+
+	LoadLights();
+
+
+	heightMapNode = LoadHeightMap();
+	hellKnightNode = LoadHellKnight();
+	waterNode = LoadWater();
+	root[0]->AddChild(heightMapNode);
+
+	heightMapNode->AddChild(hellKnightNode);
+	heightMapNode->AddChild(waterNode);
+
+	
+}
+
+inline void Renderer::InitScene1()
+{
+
 }
 
 inline SceneNode* Renderer::LoadHeightMap()
@@ -309,15 +354,23 @@ inline SceneNode* Renderer::LoadWater()
 
 inline void Renderer::LoadSkyBox()
 {
-	skyBox = SOIL_load_OGL_cubemap(
+	
+	skyBox1 = SOIL_load_OGL_cubemap(
 		TEXTUREDIR"rusted_west.jpg", TEXTUREDIR"rusted_east.jpg",
 		TEXTUREDIR"rusted_up.jpg", TEXTUREDIR"rusted_down.jpg",
 		TEXTUREDIR"rusted_south.jpg", TEXTUREDIR"rusted_north.jpg",
 		SOIL_LOAD_RGB,
 		SOIL_CREATE_NEW_ID, 0
-	);
-	if (!skyBox) return;
+	); 
 
+	skyBox2 = SOIL_load_OGL_cubemap(
+		TEXTUREDIR"lagoon_ft.tga", TEXTUREDIR"lagoon_bk.tga",
+		TEXTUREDIR"lagoon_up.tga", TEXTUREDIR"lagoon_dn.tga",
+		TEXTUREDIR"lagoon_rt.tga", TEXTUREDIR"lagoon_lf.tga",
+		SOIL_LOAD_RGB,
+		SOIL_CREATE_NEW_ID, 0
+	);
+	if (!skyBox1 || !skyBox2) return;
 }
 
 inline SceneNode* Renderer::LoadHellKnight()
@@ -332,7 +385,7 @@ inline SceneNode* Renderer::LoadHellKnight()
 
 	MD5Node* hellNode = new MD5Node(*hellData);
 
-	hellNode->SetTransform(Matrix4::Translation(Vector3(2000, 200, 2000)));
+	hellNode->SetTransform(Matrix4::Translation(Vector3(2000, 1000.0f, 2000)));
 
 	AABoundingBox *aabb = new AABoundingBox(Matrix4(), Vector3());
 	aabb->SetCorner(Vector3(-50, 0, -50), Vector3(50, 150, 50));
@@ -358,7 +411,7 @@ inline void Renderer::LoadLights()
 	lights = new Light * [numberOfLight];
 	lights[0] = new Light(Vector3((RAW_HEIGHT * HEIGHTMAP_X / 2.0f),
 		500.0f, (RAW_HEIGHT * HEIGHTMAP_Z / 2.0f)),
-		Vector4(1.0, 1.0, 1.0, 1.0), Vector4(0, 0, 1.0, 1.0), PointLight, (RAW_WIDTH * HEIGHTMAP_X) / 2.0f, Vector3(0, -1, 0), 60.0f);
+		Vector4(1.0, 1.0, 0.5, 1.0), Vector4(1.0, 0.5, 0.5, 1.0), DirectionLight, (RAW_WIDTH * HEIGHTMAP_X) / 2.0f, Vector3(0, -1, 0), 60.0f);
 }
 
 inline void Renderer::InitPostProcessing()
@@ -454,8 +507,17 @@ void Renderer::DrawPostProcess()
 	glBindFramebuffer(GL_FRAMEBUFFER, processFBO);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, bufferColourTex[1], 0);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
-	SetCurrentShader(processShader);
+	int pass;
+	if (showPostProcessing)
+	{
+		pass = POST_PASSES;
+		SetCurrentShader(processShader); 
+	}
+	else
+	{
+		pass = 1;
+		SetCurrentShader(textureShader);
+	}
 	projMatrix = Matrix4::Orthographic(-1, 1, 1, -1, -1, 1);
 	viewMatrix.ToIdentity();
 	textureMatrix.ToIdentity();
@@ -464,6 +526,7 @@ void Renderer::DrawPostProcess()
 	glDisable(GL_DEPTH_TEST);
 
 	glUniform2f(glGetUniformLocation(currentShader->GetProgram(), "pixelSize"), 1.0f / width, 1.0f / height);
+
 	for (int i = 0; i < POST_PASSES; i++)
 	{
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, bufferColourTex[1], 0);
@@ -471,7 +534,7 @@ void Renderer::DrawPostProcess()
 
 		ppQuad1->SetTexture(bufferColourTex[0]);
 		ppQuad1->Draw();
-		// Now to swap the colour buffers , and do the second blur pass
+
 		glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "isVertical"), 1);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, bufferColourTex[0], 0);
 
@@ -501,26 +564,25 @@ void Renderer::PresentScene()
 
 	glUseProgram(0);
 
-
 }
 
 void Renderer::DrawSkybox()
 {
 	glDepthMask(GL_FALSE);
 	glDisable(GL_CULL_FACE);
-	//glEnable(GL_STENCIL_TEST);
+	glEnable(GL_STENCIL_TEST);
 	SetCurrentShader(skyBoxShader);
 	//glUniform3fv(glGetUniformLocation(currentShader->GetProgram(), "cameraPos"), 1, (float*)& camera->GetPosition());
 	
-	//glActiveTexture(GL_TEXTURE2);
-	//glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox);
-	//glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "cubeTex"), 2);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox1);
+	glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "cubeTex"), 2);
 	UpdateShaderMatrices();
 	skyBoxQuad->Draw();
 
 	glUseProgram(0);
 	glDepthMask(GL_TRUE);
 	glEnable(GL_CULL_FACE);
-	//glDisable(GL_STENCIL_TEST);
+	glDisable(GL_STENCIL_TEST);
 }
 

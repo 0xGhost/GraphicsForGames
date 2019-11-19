@@ -11,7 +11,7 @@
 #include "Renderer.h"
 
 int main() {
-	Window w("Impressive", 1280, 720, false);
+	Window w("Impressive", 1280, 900, false);
 	if (!w.HasInitialised()) {
 		return -1;
 	}

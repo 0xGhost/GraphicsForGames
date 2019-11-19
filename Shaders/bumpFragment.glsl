@@ -63,7 +63,7 @@ void main(void)
 		float sFactor = pow(rFactor, power * 50.0f);
 
 		vec3 colour = (diffuse.rgb * lightColour[i].rgb);
-		colour += (lightSpecularColour[i].rgb * sFactor);// * 0.33;
+		colour += (lightSpecularColour[i].rgb * sFactor) * 0.33;
 		fragColour = vec4(colour * atten * lambert, diffuse.a) * (1.0 / LightNum);
 
 		fragColour.rgb = fragColour.rgb * (((lightType[i] & SpotLight) != 0 && angle < cos(radians(lightAngle[i]))) == false? 1.0f : 0.0f)
