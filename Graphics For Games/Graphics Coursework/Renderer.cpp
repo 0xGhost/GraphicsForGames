@@ -29,10 +29,13 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent), window(&parent), showB
 	LoadSkyBox();
 
 	InitScene0();
-	sceneNum = 0;
+	sceneNum = 1;
 
 	InitPostProcessing();
 	showPostProcessing = false;
+
+	InitScene1();
+	InitShadow();
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
@@ -64,6 +67,8 @@ Renderer::~Renderer()
 	glDeleteFramebuffers(1, &bufferFBO);
 	glDeleteFramebuffers(1, &bufferFBO0);
 	glDeleteFramebuffers(1, &processFBO);
+	glDeleteTextures(1, &shadowTex);
+	glDeleteFramebuffers(1, &shadowFBO);
 }
 
 void Renderer::UpdateScene(float msec)
@@ -83,7 +88,8 @@ void Renderer::RenderScene()
 	BuildNodeLists(root[sceneNum]);
 	SortNodeLists();
 
-
+	if (sceneNum == 0)
+	{
 		// draw scene to FBO
 		glBindFramebuffer(GL_FRAMEBUFFER, bufferFBO);
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -106,8 +112,13 @@ void Renderer::RenderScene()
 		showBoundingVolume = temp;
 
 		DrawPostProcess();
-
 		PresentScene();
+	}
+	if (sceneNum == 1)
+	{
+		DrawShadowScene(); // First render pass ...
+		DrawCombinedScene(); // Second render pass ...
+	}
 
 	SwapBuffers();
 	ClearNodeLists();
@@ -170,14 +181,14 @@ void Renderer::DrawNode(SceneNode* n)
 	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
 	if (n->GetMesh())
 	{
-		SetCurrentShader(n->GetShader() != NULL ? n->GetShader() : sceneShader);
+		if (n->GetShader()) SetCurrentShader(n->GetShader());
+		//SetCurrentShader(n->GetShader() != NULL ? n->GetShader() : sceneShader);
 		Matrix4 temp = modelMatrix;
 		modelMatrix = n->GetWorldTransform() * Matrix4::Scale(n->GetModelScale());
 		textureMatrix = n->GetTextureMatrix();	
 			
 		UpdateShaderMatrices();
 		
-
 		glUniform1f(glGetUniformLocation(currentShader->GetProgram(), "time"), GetMS());
 		glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "diffuseTex"), 0);
 		glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "bumpTex"), 1);
@@ -230,9 +241,6 @@ inline void Renderer::InitScene0()
 
 	textureShader = new Shader(SHADERDIR"TexturedVertex.glsl", SHADERDIR"TexturedFragment.glsl");
 	if (!textureShader->LinkProgram()) return;
-
-
-
 	
 	quad->SetTexture(SOIL_load_OGL_texture(TEXTUREDIR"brick.tga", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0));
 	if (!quad->GetTexture()) return;
@@ -269,7 +277,6 @@ inline void Renderer::InitScene0()
 
 	LoadLights();
 
-
 	heightMapNode = LoadHeightMap();
 	hellKnightNode = LoadHellKnight();
 	waterNode = LoadWater();
@@ -283,7 +290,9 @@ inline void Renderer::InitScene0()
 
 inline void Renderer::InitScene1()
 {
-
+	root[1] = new SceneNode();
+	oceanNode = LoadOcean();
+	root[1]->AddChild(oceanNode);
 }
 
 inline SceneNode* Renderer::LoadHeightMap()
@@ -314,6 +323,28 @@ inline SceneNode* Renderer::LoadHeightMap()
 	hm->SetBoundingVolume(new AABoundingBox(hm->GetWorldTransform(), hm->GetModelScale(), heightMap));
 	//hm->SetBoundingVolume(new BoundingSphere(hm->GetWorldTransform(), hm->GetModelScale(), 100.0f));
 	return hm;
+}
+
+inline SceneNode* Renderer::LoadOcean()
+{
+	Mesh *oceanMesh = new HeightMap();
+	oceanMesh->SetTexture(SOIL_load_OGL_texture(
+		TEXTUREDIR "water.JPG", SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS));
+	oceanMesh->SetBumpMap(SOIL_load_OGL_texture(
+		TEXTUREDIR "Barren RedsDOT3.JPG", SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS));
+	SetTextureRepeating(oceanMesh->GetTexture(), true);
+	SetTextureRepeating(oceanMesh->GetBumpMap(), true);
+
+	oceanNode = new SceneNode();
+	oceanNode->SetShader(shadowSceneShader);
+	oceanNode->SetMesh(oceanMesh);
+	oceanNode->SetColour(Vector4(1.0f, 1.0f, 1.0f, 0.5f));
+	oceanNode->SetTransform(Matrix4::Translation(Vector3(0, 0, 0)));
+	oceanNode->SetModelScale(Vector3(1.0f, 1.0f, 1.0f));
+	oceanNode->SetBoundingVolume(new AABoundingBox(oceanNode->GetWorldTransform(), oceanNode->GetModelScale(), oceanMesh));
+	return oceanNode;
 }
 
 inline SceneNode* Renderer::LoadWater()
@@ -586,3 +617,107 @@ void Renderer::DrawSkybox()
 	glDisable(GL_STENCIL_TEST);
 }
 
+inline void Renderer::InitShadow()
+{
+	shadowSceneShader = new Shader(SHADERDIR"shadowscenevert.glsl",
+		SHADERDIR"shadowscenefrag.glsl");
+	shadowShader = new Shader(SHADERDIR"shadowVert.glsl",
+		SHADERDIR"shadowFrag.glsl");
+
+	if (!shadowSceneShader->LinkProgram() || !shadowShader->LinkProgram())
+	{
+		return;
+	}
+
+	glGenTextures(1, &shadowTex);
+	glBindTexture(GL_TEXTURE_2D, shadowTex);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
+		SHADOWSIZE, SHADOWSIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE,
+		GL_COMPARE_R_TO_TEXTURE);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glGenFramebuffers(1, &shadowFBO);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, shadowFBO);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+		GL_TEXTURE_2D, shadowTex, 0);
+	glDrawBuffer(GL_NONE);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Renderer::DrawShadowScene()
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, shadowFBO);
+
+	glClear(GL_DEPTH_BUFFER_BIT);
+
+	glViewport(0, 0, SHADOWSIZE, SHADOWSIZE);
+
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+
+	SetCurrentShader(shadowShader);
+
+	if (lights[0]->GetType() == DirectionLight)
+	{
+		projMatrix = Matrix4::Orthographic(-1, 20000, 1000, -1000, 1000, -1000);
+	}
+	else
+	{
+		projMatrix = Matrix4::Perspective(1.0f, 15000.0f,
+			(float)width / (float)height, 103.0f);
+	}
+	viewMatrix = Matrix4::BuildViewMatrix(
+		lights[0]->GetPosition(), lights[0]->GetDirection());
+	textureMatrix = biasMatrix * (projMatrix * viewMatrix);
+
+	UpdateShaderMatrices();
+
+	DrawOcean();
+
+	glUseProgram(0);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glViewport(0, 0, width, height);
+	projMatrix = Matrix4::Perspective(1.0f, 15000.0f, (float)width / (float)height, 45.0f);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Renderer::DrawCombinedScene() {
+	SetCurrentShader(shadowSceneShader);
+	glUniform1i(glGetUniformLocation(currentShader->GetProgram(),
+		"diffuseTex"), 0);
+	glUniform1i(glGetUniformLocation(currentShader->GetProgram(),
+		"bumpTex"), 1);
+	glUniform1i(glGetUniformLocation(currentShader->GetProgram(),
+		"shadowTex"), 8);
+
+	glUniform3fv(glGetUniformLocation(currentShader->GetProgram(),
+		"cameraPos"), 1, (float*)& camera->GetPosition());
+
+	SetShaderLight(*lights);
+
+	glActiveTexture(GL_TEXTURE8);
+	glBindTexture(GL_TEXTURE_2D, shadowTex);
+	glActiveTexture(GL_TEXTURE0);
+
+	viewMatrix = camera->BuildViewMatrix();
+	UpdateShaderMatrices();
+
+	DrawOcean();
+	//DrawFloor();
+	//DrawMesh();
+
+	glUseProgram(0);
+}
+
+inline void Renderer::DrawOcean()
+{
+
+	oceanNode->Draw(*this);
+}

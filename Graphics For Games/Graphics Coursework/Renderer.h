@@ -11,6 +11,7 @@
 
 #define LIGHTNUM 8
 #define POST_PASSES 2
+#define SHADOWSIZE 2048
 
 class Renderer :
 	public OGLRenderer
@@ -49,11 +50,15 @@ protected:
 	Shader* textureShader;
 	Shader* reflectShader;
 	Shader* skyBoxShader;
+	Shader* shadowShader;
+	Shader* shadowSceneShader;
 
 
 	SceneNode* heightMapNode;
 	SceneNode* hellKnightNode;
 	SceneNode* waterNode;
+	
+	SceneNode* oceanNode;
 
 	size_t numberOfLight;
 	Light** lights; // Array of lighting data
@@ -85,6 +90,8 @@ protected:
 	GLuint pointLightFBO; // FBO for our lighting pass
 	GLuint lightEmissiveTex; // Store emissive lighting
 	GLuint lightSpecularTex; // Store specular lighting
+	GLuint shadowTex;
+	GLuint shadowFBO;
 
 	SceneNode* root[2];
 	
@@ -102,6 +109,7 @@ private:
 	inline void InitScene0();
 	inline void InitScene1();
 	inline SceneNode* LoadHeightMap();
+	inline SceneNode* LoadOcean();
 	inline SceneNode* LoadWater();
 	inline SceneNode* LoadHellKnight();
 	inline void LoadSkyBox();
@@ -110,6 +118,10 @@ private:
 	inline void DrawPostProcess();
 	inline void PresentScene();
 	inline void DrawSkybox();
+	inline void InitShadow();
+	inline void DrawShadowScene();
+	inline void DrawCombinedScene();
+	inline void DrawOcean();
 };
 
 

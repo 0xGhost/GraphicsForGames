@@ -22,6 +22,6 @@ void main(void) {
 
 	fragColour = vec4(1, 1, 1, 1) * reflection;
 	fragColour = texture (cubeTex2,
-		incident);
+		incident + normalize(IN.normal) * 0.7f ) ;
 
 }

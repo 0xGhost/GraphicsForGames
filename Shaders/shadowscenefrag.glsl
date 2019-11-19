@@ -66,7 +66,7 @@ void main(void) {
 		lambert *= shadow; // New !
 
 		vec3 colour = (diffuse.rgb * lightColour[i].rgb);
-		colour += (lightSpecularColour[i].rgb * sFactor);// * 0.33;
+		colour += (lightSpecularColour[i].rgb * sFactor) * 0.33;
 		fragColour = vec4(colour * atten * lambert, diffuse.a) * (1.0 / LightNum);
 		fragColour.rgb += (diffuse.rgb * lightColour[i].rgb) * 0.1 * (1.0 / LightNum);
 

@@ -9,7 +9,7 @@
 class SceneNode
 {
 public:
-	SceneNode(Mesh* m = NULL, Vector4 colour = Vector4(1, 1, 1, 1), Shader* s = NULL, GLuint t = 0);
+	SceneNode(Mesh* m = nullptr, Vector4 colour = Vector4(1, 1, 1, 1), Shader* s = nullptr, GLuint t = 0);
 	~SceneNode(void);
 
 	void AddChild(SceneNode* s);
