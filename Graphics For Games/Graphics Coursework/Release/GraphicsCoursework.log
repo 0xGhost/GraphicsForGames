@@ -1,0 +1,7 @@
+﻿  main.cpp
+  Renderer.cpp
+C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Graphics Coursework\main.cpp(19,44): warning C4244:  'argument': conversion from 'float' to 'unsigned int', possible loss of data
+C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Graphics Coursework\Renderer.cpp(52,13): warning C4156:  deletion of an array expression without using the array form of 'delete'; array form substituted
+C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Graphics Coursework\Renderer.cpp(52,13): warning C4154:  deletion of an array expression; conversion to pointer supplied
+C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Graphics Coursework\Renderer.cpp(455,84): warning C4305:  'argument': truncation from 'double' to 'const float'
+LINK : fatal error LNK1104: cannot open file 'nclgl.lib'

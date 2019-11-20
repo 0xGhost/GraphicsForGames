@@ -1,8 +1,28 @@
-﻿  Frustum.cpp
+﻿  AABoundingBox.cpp
+  BoundingBox.cpp
+  BoundingSphere.cpp
+  BoundingVolume.cpp
+  Camera.cpp
+  Frustum.cpp
+  GameTimer.cpp
+  HeightMap.cpp
+  Keyboard.cpp
+  Light.cpp
+  Matrix4.cpp
+  MD5Anim.cpp
+  MD5FileData.cpp
+  MD5Mesh.cpp
   MD5Node.cpp
-C:\Users\xxlya\Source\Repos\0xGhost\GraphicsForGames\nclgl\Keyboard.h(1,1): warning C4819:  The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
-  SceneNode.cpp
-C:\Users\xxlya\Source\Repos\0xGhost\GraphicsForGames\nclgl\Keyboard.h(1,1): warning C4819:  The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
+  Mesh.cpp
+  Mouse.cpp
+  OBJMesh.cpp
+  OGLRenderer.cpp
+  Plane.cpp
   Generating Code...
-C:\Users\xxlya\Source\Repos\0xGhost\GraphicsForGames\nclgl\Keyboard.h(1,1): warning C4819:  The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
-  nclgl.vcxproj -> C:\Users\xxlya\Source\Repos\0xGhost\GraphicsForGames\Graphics For Games\Debug\nclgl.lib
+  Compiling...
+  Quaternion.cpp
+  SceneNode.cpp
+  Shader.cpp
+  Window.cpp
+  Generating Code...
+  nclgl.vcxproj -> C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Debug\nclgl.lib

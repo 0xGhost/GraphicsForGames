@@ -43,7 +43,7 @@ void main(void) {
 		vec3 incident = normalize(lightPos[i] - IN.worldPos) * check(lightType[i], ~DirectionLight);
 
 		float angle = dot(normalize(lightDir[i]), -incident);
-		if ((lightType[i] & SpotLight) != 0 && angle < cos(radians(lightAngle[i]))) continue;
+		//if ((lightType[i] & SpotLight) != 0 && angle < cos(radians(lightAngle[i]))) continue;
 
 
 		incident += normalize(-lightDir[i]) * check(lightType[i], DirectionLight);
@@ -68,33 +68,9 @@ void main(void) {
 		vec3 colour = (diffuse.rgb * lightColour[i].rgb);
 		colour += (lightSpecularColour[i].rgb * sFactor) * 0.33;
 		fragColour = vec4(colour * atten * lambert, diffuse.a) * (1.0 / LightNum);
-		fragColour.rgb += (diffuse.rgb * lightColour[i].rgb) * 0.1 * (1.0 / LightNum);
-
-		//fragColour = fragColour * (normalize(lightDir[i]) * IN.worldPos) > lightAngle[i] ? 0:1;
-	}
-	/*
-	vec3 incident = normalize(lightPos - IN.worldPos) * check(lightType[i], ~DirectionLight);
-	float lambert = max(0.0, dot(incident, normal)); // Different !
-
-	float dist = length(lightPos - IN.worldPos);
-	float atten = 1.0 - clamp(dist / lightRadius, 0.0, 1.0);
-
-	vec3 viewDir = normalize(cameraPos - IN.worldPos);
-	vec3 halfDir = normalize(incident + viewDir);
-
-	float rFactor = max(0.0, dot(halfDir, normal)); // Different !
-	float sFactor = pow(rFactor, 33.0);
-	float shadow = 1.0; // New !
-
-	if (IN.shadowProj.w > 0.0) { // New !
-		shadow = textureProj(shadowTex, IN.shadowProj);
+	
+		fragColour.rgb = fragColour.rgb * (((lightType[i] & SpotLight) != 0 && angle < cos(radians(lightAngle[i]))) == false ? 1.0f : 0.0f)
+			+ (diffuse.rgb * lightColour[i].rgb) * 0.1 * (1.0 / LightNum);
 	}
 
-	lambert *= shadow; // New !
-
-	vec3 colour = (diffuse.rgb * lightColour.rgb);
-	colour += (lightColour.rgb * sFactor) * 0.33;
-	fragColour = vec4(colour * atten * lambert, diffuse.a);
-	fragColour.rgb += (diffuse.rgb * lightColour.rgb) * 0.1;
-	*/
 }

@@ -6,9 +6,10 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent), window(&parent), showB
 {
 	BoundingSphere::CreateSphereMesh();
 	BoundingBox::CreateBoxMesh();
-
-
+	camera = new Camera();
 	skyBoxQuad = Mesh::GenerateQuad();
+	
+	
 
 	quad = Mesh::GenerateQuad();
 	sphere = new OBJMesh();
@@ -17,19 +18,19 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent), window(&parent), showB
 		return;
 	}
 
-	camera = new Camera();
+	
 	boundingVolumeShader = new Shader(SHADERDIR"BoundingVolumeVertex.glsl", SHADERDIR"BoundingVolumeFragment.glsl");
 	if (!boundingVolumeShader->LinkProgram()) return;
 
 	sceneShader = new Shader(SHADERDIR"BumpVertex.glsl", SHADERDIR"BumpFragment.glsl");
 	if (!sceneShader->LinkProgram()) return;
-
+	
 	skyBoxShader = new Shader(SHADERDIR "skyboxVertex.glsl", SHADERDIR "skyboxFragment.glsl");
 	if (!skyBoxShader->LinkProgram()) return;
 	LoadSkyBox();
-
+	LoadLights();
 	InitScene0();
-	sceneNum = 1;
+	
 
 	InitPostProcessing();
 	showPostProcessing = false;
@@ -37,6 +38,7 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent), window(&parent), showB
 	InitScene1();
 	InitShadow();
 
+	sceneNum = 1;
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glEnable(GL_CULL_FACE);
@@ -51,6 +53,8 @@ Renderer::~Renderer()
 	delete root;
 	delete quad;
 	delete camera;
+	delete oceanMesh;
+	delete skyBoxQuad;
 	BoundingSphere::DeleteSphereMesh();
 	BoundingBox::DeleteBoxMesh();
 	currentShader = NULL;
@@ -80,6 +84,7 @@ void Renderer::UpdateScene(float msec)
 	root[sceneNum]->Update(msec);
 	waterRotate = msec / 1000.0f;
 	waterNode->SetTextureMatrix(waterNode->GetTextureMatrix() * Matrix4::Rotation(waterRotate, Vector3(0.0f, 0.0f, 1.0f)));
+
 }
 
 void Renderer::RenderScene()
@@ -97,7 +102,7 @@ void Renderer::RenderScene()
 		SetCurrentShader(sceneShader);
 		UpdateShaderMatrices();
 		DrawNodes();
-		DrawSkybox();
+		DrawSkybox(sceneNum);
 
 		// draw map from mapCamera to FBO0
 		bool temp = showBoundingVolume;
@@ -116,8 +121,15 @@ void Renderer::RenderScene()
 	}
 	if (sceneNum == 1)
 	{
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		projMatrix = perspectiveMatrix;
+		UpdateShaderMatrices();
+		DrawSkybox(sceneNum);
+		//DrawOcean();
+		
 		DrawShadowScene(); // First render pass ...
 		DrawCombinedScene(); // Second render pass ...
+		
 	}
 
 	SwapBuffers();
@@ -145,7 +157,6 @@ void Renderer::BuildNodeLists(SceneNode* from)
 			BuildNodeLists(*i);
 		}
 	}
-
 	
 }
 
@@ -194,10 +205,10 @@ void Renderer::DrawNode(SceneNode* n)
 		glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "bumpTex"), 1);
 		glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "cubeTex"), 2);
 		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox1);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox[0]);
 		glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "cubeTex2"), 3);
 		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox2);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox[1]);
 		//glActiveTexture(0);
 		glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "glossTex"), 7);
 		Matrix4 transform = n->GetWorldTransform() * Matrix4::Scale(n->GetModelScale());
@@ -275,7 +286,7 @@ inline void Renderer::InitScene0()
 	root[0]->AddChild(p);
 
 
-	LoadLights();
+	
 
 	heightMapNode = LoadHeightMap();
 	hellKnightNode = LoadHellKnight();
@@ -291,8 +302,8 @@ inline void Renderer::InitScene0()
 inline void Renderer::InitScene1()
 {
 	root[1] = new SceneNode();
-	oceanNode = LoadOcean();
-	root[1]->AddChild(oceanNode);
+	LoadOcean();
+	LoadPyramid();
 }
 
 inline SceneNode* Renderer::LoadHeightMap()
@@ -325,18 +336,21 @@ inline SceneNode* Renderer::LoadHeightMap()
 	return hm;
 }
 
-inline SceneNode* Renderer::LoadOcean()
+inline void Renderer::LoadOcean()
 {
-	Mesh *oceanMesh = new HeightMap();
+	oceanMesh = new HeightMap();
 	oceanMesh->SetTexture(SOIL_load_OGL_texture(
-		TEXTUREDIR "water.JPG", SOIL_LOAD_AUTO,
+		TEXTUREDIR "water.tga", SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS));
 	oceanMesh->SetBumpMap(SOIL_load_OGL_texture(
-		TEXTUREDIR "Barren RedsDOT3.JPG", SOIL_LOAD_AUTO,
+		TEXTUREDIR "waterDOT3.tga", SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS));
 	SetTextureRepeating(oceanMesh->GetTexture(), true);
 	SetTextureRepeating(oceanMesh->GetBumpMap(), true);
-
+	shadowOceanShader = new Shader(SHADERDIR"OceanShadowVertex.glsl", SHADERDIR"bumpFragment.glsl");
+	if (!shadowOceanShader->LinkProgram()) 
+		return;
+	/*
 	oceanNode = new SceneNode();
 	oceanNode->SetShader(shadowSceneShader);
 	oceanNode->SetMesh(oceanMesh);
@@ -345,6 +359,7 @@ inline SceneNode* Renderer::LoadOcean()
 	oceanNode->SetModelScale(Vector3(1.0f, 1.0f, 1.0f));
 	oceanNode->SetBoundingVolume(new AABoundingBox(oceanNode->GetWorldTransform(), oceanNode->GetModelScale(), oceanMesh));
 	return oceanNode;
+	*/
 }
 
 inline SceneNode* Renderer::LoadWater()
@@ -386,7 +401,7 @@ inline SceneNode* Renderer::LoadWater()
 inline void Renderer::LoadSkyBox()
 {
 	
-	skyBox1 = SOIL_load_OGL_cubemap(
+	skyBox[0] = SOIL_load_OGL_cubemap(
 		TEXTUREDIR"rusted_west.jpg", TEXTUREDIR"rusted_east.jpg",
 		TEXTUREDIR"rusted_up.jpg", TEXTUREDIR"rusted_down.jpg",
 		TEXTUREDIR"rusted_south.jpg", TEXTUREDIR"rusted_north.jpg",
@@ -394,14 +409,14 @@ inline void Renderer::LoadSkyBox()
 		SOIL_CREATE_NEW_ID, 0
 	); 
 
-	skyBox2 = SOIL_load_OGL_cubemap(
+	skyBox[1] = SOIL_load_OGL_cubemap(
 		TEXTUREDIR"lagoon_ft.tga", TEXTUREDIR"lagoon_bk.tga",
 		TEXTUREDIR"lagoon_up.tga", TEXTUREDIR"lagoon_dn.tga",
 		TEXTUREDIR"lagoon_rt.tga", TEXTUREDIR"lagoon_lf.tga",
 		SOIL_LOAD_RGB,
 		SOIL_CREATE_NEW_ID, 0
 	);
-	if (!skyBox1 || !skyBox2) return;
+	if (!skyBox[0] || !skyBox[1]) return;
 }
 
 inline SceneNode* Renderer::LoadHellKnight()
@@ -440,9 +455,14 @@ inline void Renderer::LoadLights()
 {
 	numberOfLight = 1;
 	lights = new Light * [numberOfLight];
-	lights[0] = new Light(Vector3((RAW_HEIGHT * HEIGHTMAP_X / 2.0f),
-		500.0f, (RAW_HEIGHT * HEIGHTMAP_Z / 2.0f)),
-		Vector4(1.0, 1.0, 0.5, 1.0), Vector4(1.0, 0.5, 0.5, 1.0), DirectionLight, (RAW_WIDTH * HEIGHTMAP_X) / 2.0f, Vector3(0, -1, 0), 60.0f);
+	//lights[0] = new Light(Vector3((RAW_HEIGHT * HEIGHTMAP_X / 2.0f),
+		//500.0f, (RAW_HEIGHT * HEIGHTMAP_Z / 2.0f)),
+		//Vector4(1.0, 1.0, 0.5, 1.0), Vector4(1.0, 0.5, 0.5, 1.0), DirectionLight, (RAW_WIDTH * HEIGHTMAP_X) / 2.0f, Vector3(0, -1, 0), 60.0f);
+	Vector3 d = Vector3(0, -1,0);
+	//Vector3 d = Vector3(-0.15, -1, 0.15);
+	d.Normalise();
+	lights[0] = new Light(Vector3(0.0f, 500.0f, 0.0f),
+		Vector4(1, 1, 1, 1), Vector4(1, 1, 1, 1), SpotLight, 5500.0f, d, 80.0f);
 }
 
 inline void Renderer::InitPostProcessing()
@@ -597,16 +617,17 @@ void Renderer::PresentScene()
 
 }
 
-void Renderer::DrawSkybox()
+void Renderer::DrawSkybox(int i)
 {
 	glDepthMask(GL_FALSE);
 	glDisable(GL_CULL_FACE);
+	if(sceneNum == 0)
 	glEnable(GL_STENCIL_TEST);
 	SetCurrentShader(skyBoxShader);
 	//glUniform3fv(glGetUniformLocation(currentShader->GetProgram(), "cameraPos"), 1, (float*)& camera->GetPosition());
 	
 	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox1);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox[i]);
 	glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "cubeTex"), 2);
 	UpdateShaderMatrices();
 	skyBoxQuad->Draw();
@@ -671,16 +692,18 @@ void Renderer::DrawShadowScene()
 	else
 	{
 		projMatrix = Matrix4::Perspective(1.0f, 15000.0f,
-			(float)width / (float)height, 103.0f);
+			(float)width / (float)height, 105.0f);
 	}
 	viewMatrix = Matrix4::BuildViewMatrix(
-		lights[0]->GetPosition(), lights[0]->GetDirection());
+		lights[0]->GetPosition(), /*lights[0]->GetPosition() +*/ Vector3(1,0,1));
 	textureMatrix = biasMatrix * (projMatrix * viewMatrix);
 
 	UpdateShaderMatrices();
 
+	
+	
 	DrawOcean();
-
+	DrawPyramid();
 	glUseProgram(0);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glViewport(0, 0, width, height);
@@ -709,15 +732,52 @@ void Renderer::DrawCombinedScene() {
 	viewMatrix = camera->BuildViewMatrix();
 	UpdateShaderMatrices();
 
+	//DrawPyramid();
 	DrawOcean();
 	//DrawFloor();
 	//DrawMesh();
-
+	DrawPyramid();
 	glUseProgram(0);
 }
 
 inline void Renderer::DrawOcean()
 {
+	glUniform1f(glGetUniformLocation(currentShader->GetProgram(), "time"), GetMS());
+	oceanMesh->Draw();
+}
 
-	oceanNode->Draw(*this);
+inline void Renderer::LoadPyramid()
+{
+	pyramidMesh = new OBJMesh();
+	if (!pyramidMesh->LoadOBJMesh(MESHDIR"pyramid.obj"))
+	{
+		return;
+	}
+	
+	pyramidMesh->SetTexture(SOIL_load_OGL_texture(TEXTUREDIR"brick.tga", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0));
+	if (!pyramidMesh->GetTexture()) return;
+	pyramidMesh->SetBumpMap(SOIL_load_OGL_texture(TEXTUREDIR"brickDOT3.tga", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0));
+	if (!pyramidMesh->GetBumpMap()) return;
+	SetTextureRepeating(waterQuad->GetTexture(), true);
+	SetTextureRepeating(waterQuad->GetBumpMap(), true);
+}
+
+inline void Renderer::DrawPyramid()
+{
+
+
+	Matrix4 modelMatrixP = Matrix4::Translation(Vector3(500, 800, 300))
+		* Matrix4::Rotation(-90.0f, Vector3(1, 0, 0))
+		* Matrix4::Scale(Vector3(800, 800, 800));
+
+	Matrix4 tempMatrix = textureMatrix * modelMatrixP;
+
+	glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram()
+		, "textureMatrix"), 1, false, *&tempMatrix.values);
+
+	glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram()
+		, "modelMatrix"), 1, false, *&modelMatrixP.values);
+	
+	pyramidMesh->Draw();
+
 }

@@ -42,6 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>..\..\GLEW\include;..\..\SOIL;..\nclgl;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\GLEW\lib\$(Configuration);..\..\SOIL\$(Configuration)\;..\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)1</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>..\..\GLEW\include;..\..\SOIL\;..\nclgl;$(IncludePath)</IncludePath>

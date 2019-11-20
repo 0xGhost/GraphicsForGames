@@ -52,14 +52,18 @@ protected:
 	Shader* skyBoxShader;
 	Shader* shadowShader;
 	Shader* shadowSceneShader;
+	Shader* shadowOceanShader;
 
 
 	SceneNode* heightMapNode;
 	SceneNode* hellKnightNode;
 	SceneNode* waterNode;
-	
+
+	SceneNode* pyramidNode;
 	SceneNode* oceanNode;
 
+	OBJMesh* pyramidMesh;
+	Mesh* oceanMesh;
 	size_t numberOfLight;
 	Light** lights; // Array of lighting data
 	Mesh* heightMap; // Terrain !
@@ -72,8 +76,8 @@ protected:
 	Mesh* ppQuad2;
 	Mesh* waterQuad;
 	float waterRotate;
-	GLuint skyBox1;
-	GLuint skyBox2;
+	GLuint skyBox[2];
+	//GLuint skyBox2;
 
 	Matrix4 perspectiveMatrix = Matrix4::Perspective(1, 20000, (float)width / (float)height, 45);
 
@@ -109,7 +113,7 @@ private:
 	inline void InitScene0();
 	inline void InitScene1();
 	inline SceneNode* LoadHeightMap();
-	inline SceneNode* LoadOcean();
+	inline void LoadOcean();
 	inline SceneNode* LoadWater();
 	inline SceneNode* LoadHellKnight();
 	inline void LoadSkyBox();
@@ -117,11 +121,13 @@ private:
 	inline void InitPostProcessing();
 	inline void DrawPostProcess();
 	inline void PresentScene();
-	inline void DrawSkybox();
+	inline void DrawSkybox(int i);
 	inline void InitShadow();
 	inline void DrawShadowScene();
 	inline void DrawCombinedScene();
 	inline void DrawOcean();
+	inline void LoadPyramid();
+	inline void DrawPyramid();
 };
 
 

@@ -1,0 +1,30 @@
+﻿  AABoundingBox.cpp
+  BoundingBox.cpp
+  BoundingSphere.cpp
+  BoundingVolume.cpp
+  Camera.cpp
+  Frustum.cpp
+  GameTimer.cpp
+  HeightMap.cpp
+  Keyboard.cpp
+  Light.cpp
+  Matrix4.cpp
+  MD5Anim.cpp
+  MD5FileData.cpp
+  MD5Mesh.cpp
+  MD5Node.cpp
+  Mesh.cpp
+  Mouse.cpp
+  OBJMesh.cpp
+  OGLRenderer.cpp
+C:\Users\b9010077\source\repos\Graphic\Download\nclgl\OGLRenderer.cpp(140,42): error C2039:  'DebugCallback': is not a member of 'OGLRenderer'
+C:\Users\b9010077\source\repos\Graphic\Download\nclgl\OGLRenderer.h(93): message :  see declaration of 'OGLRenderer'
+C:\Users\b9010077\source\repos\Graphic\Download\nclgl\OGLRenderer.cpp(140,55): error C2065:  'DebugCallback': undeclared identifier
+C:\Users\b9010077\source\repos\Graphic\Download\nclgl\OGLRenderer.cpp(319,19): error C2039:  'DebugCallback': is not a member of 'OGLRenderer'
+  Plane.cpp
+  Compiling...
+  Quaternion.cpp
+  SceneNode.cpp
+  Shader.cpp
+  Window.cpp
+C:\Users\b9010077\source\repos\Graphic\Download\nclgl\OGLRenderer.h(93): message :  see declaration of 'OGLRenderer'
