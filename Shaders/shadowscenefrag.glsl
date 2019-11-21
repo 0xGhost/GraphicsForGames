@@ -72,5 +72,4 @@ void main(void) {
 		fragColour.rgb = fragColour.rgb * (((lightType[i] & SpotLight) != 0 && angle < cos(radians(lightAngle[i]))) == false ? 1.0f : 0.0f)
 			+ (diffuse.rgb * lightColour[i].rgb) * 0.1 * (1.0 / LightNum);
 	}
-
 }

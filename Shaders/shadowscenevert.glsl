@@ -34,7 +34,7 @@ void main(void) {
 
 	OUT.worldPos = (modelMatrix * vec4(position, 1)).xyz;
 	// New !
-	OUT.shadowProj = (textureMatrix * vec4(position + (normal * 1.5), 1));
+	OUT.shadowProj = (textureMatrix * vec4(position + (normal * 15), 1));
 
 	gl_Position = (projMatrix * viewMatrix * modelMatrix) *
 		vec4(position, 1.0);

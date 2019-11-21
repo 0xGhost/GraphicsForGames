@@ -47,6 +47,8 @@ public:
 	//Sets pitch, in degrees
 	void	SetPitch(float p) { pitch = p; }
 
+	
+
 protected:
 	float	yaw;
 	float	pitch;

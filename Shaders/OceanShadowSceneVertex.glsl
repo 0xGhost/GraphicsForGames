@@ -46,7 +46,7 @@ void main(void) {
 		+ (sin(time / 1000 + (newPos.z) / 500) - cos(2 * (time / 1000 + (newPos.z) / 500))) * 60;//
 
 
-	OUT.shadowProj = (textureMatrix * vec4(newPos + (normal * 1.5), 1));
+	OUT.shadowProj = (textureMatrix * vec4(newPos + (normal * 15), 1));
 
 	OUT.worldPos = (modelMatrix * vec4(newPos, 1)).xyz;
 	gl_Position = (projMatrix * viewMatrix * modelMatrix) *

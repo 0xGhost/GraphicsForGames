@@ -12,7 +12,7 @@ class Shader
 public:
 	Shader(string vertec, string fragment, string geometry = "");
 	~Shader();
-
+	bool IsLoadFail() { return loadFailed; }
 	GLuint GetProgram() { return program; }
 	bool LinkProgram();
 protected:

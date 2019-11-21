@@ -20,7 +20,7 @@ SceneNode::~SceneNode(void)
 	{
 		delete children[i];
 	}
-	if (shader) delete shader;
+	if (shader && !shader->IsLoadFail()) delete shader;
 	delete boundingVolume;
 }
 

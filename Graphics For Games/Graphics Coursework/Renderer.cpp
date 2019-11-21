@@ -7,8 +7,9 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent), window(&parent), showB
 	BoundingSphere::CreateSphereMesh();
 	BoundingBox::CreateBoxMesh();
 	camera = new Camera();
-	skyBoxQuad = Mesh::GenerateQuad();
+	LoadAutoCamera();
 
+	skyBoxQuad = Mesh::GenerateQuad();
 	quad = Mesh::GenerateQuad();
 	sphere = new OBJMesh();
 	if (!sphere->LoadOBJMesh(MESHDIR "sphere.obj"))
@@ -32,8 +33,9 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent), window(&parent), showB
 	
 
 	InitPostProcessing();
+	showBoundingVolume = false;
 	showPostProcessing = false;
-	autoCameraLock = false;////////////////////////////////
+	autoCameraLock = true;////////////////////////////////
 
 	InitScene1();
 	InitShadow();
@@ -50,7 +52,8 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent), window(&parent), showB
 
 Renderer::~Renderer()
 {
-	delete[] root;
+	int a;
+	delete root[0];
 	delete quad;
 	delete camera;
 	delete oceanMesh;
@@ -72,12 +75,15 @@ Renderer::~Renderer()
 
 void Renderer::UpdateScene(float msec)
 {
-	if ((camera->GetPosition() - Vector3(4000.0f, 1000.0f, 4000.0f)).Length() < 201.0f)
+	if ((camera->GetPosition() - Vector3(4000.0f, 1000.0f, 4000.0f)).Length() < 205.0f && sceneNum == 0)
 		sceneNum = 1;
 	FPS = 1000.0f / msec;
 	KeyBoardControl();
 	projMatrix = perspectiveMatrix;
-	camera->UpdateCamera(msec);
+	if (!autoCameraLock)
+		camera->UpdateCamera(msec);
+	else
+		AutoCamera(msec);
 	viewMatrix = camera->BuildViewMatrix();
 	frameFrustum.FromMatrix(projMatrix * viewMatrix);
 	root[sceneNum]->Update(msec);
@@ -131,6 +137,8 @@ void Renderer::RenderScene()
 	}
 	glDisable(GL_DEPTH_TEST);
 	SetCurrentShader(textureShader);
+	
+	UpdateShaderMatrices();
 	glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "diffuseTex"), 0);
 
 	Vector3 camPos = camera->GetPosition();
@@ -700,8 +708,8 @@ void Renderer::DrawShadowScene()
 	}
 	else
 	{
-		projMatrix = Matrix4::Perspective(10.0f, 10000.0f,
-			(float)width / (float)height, 90.0f);
+		projMatrix = Matrix4::Perspective(1000.0f, 6500.0f,
+			1, 90.0f);
 	}
 	viewMatrix = Matrix4::BuildViewMatrix(
 		lights[1]->GetPosition(), lights[1]->GetPosition() + lights[1]->GetDirection());
@@ -720,6 +728,7 @@ void Renderer::DrawShadowScene()
 	glUseProgram(0);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glViewport(0, 0, width, height);
+	
 	projMatrix = perspectiveMatrix;//Matrix4::Perspective(1.0f, 15000.0f, (float)width / (float)height, 45.0f);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -751,11 +760,25 @@ void Renderer::DrawCombinedScene() {
 
 
 	SetCurrentShader(shadowSceneShader);
+	textureMatrix.ToIdentity();
+
 	UpdateShaderMatrices();
+	SetShaderLight(lights[1]);
+	glUniform1i(glGetUniformLocation(currentShader->GetProgram(),
+		"diffuseTex"), 0);
+	glUniform1i(glGetUniformLocation(currentShader->GetProgram(),
+		"bumpTex"), 1);
+	glUniform1i(glGetUniformLocation(currentShader->GetProgram(),
+		"shadowTex"), 8);
+
+	glUniform3fv(glGetUniformLocation(currentShader->GetProgram(),
+		"cameraPos"), 1, (float*)& camera->GetPosition());
+
 	DrawPyramid();
 	//DrawFloor();
 	//DrawMesh();
 	//DrawPyramid();
+	textureMatrix.ToIdentity();
 	glUseProgram(0);
 }
 
@@ -769,13 +792,14 @@ inline void Renderer::LoadPyramid()
 {
 	pyramidMesh = new OBJMesh();
 	
-	if (!pyramidMesh->LoadOBJMesh(MESHDIR"pyramid.obj"))
+	if (!pyramidMesh->LoadOBJMesh(MESHDIR"pyramid1.obj"))
 	{
 		return;
 	}
+	//pyramidMesh = Mesh::GenerateQuad();
 
-	pyramidMesh->GenerateNormals();
-	pyramidMesh->GenerateTangents();
+	//pyramidMesh->GenerateNormals();
+	//pyramidMesh->GenerateTangents();
 	
 	
 	pyramidMesh->SetTexture(SOIL_load_OGL_texture(TEXTUREDIR"brick.tga", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0));
@@ -788,8 +812,8 @@ inline void Renderer::LoadPyramid()
 
 inline void Renderer::DrawPyramid()
 {
-	Matrix4 modelMatrixP = Matrix4::Translation(Vector3(6000, 1000, 6000))
-		* Matrix4::Rotation(-90.0f, Vector3(1, 0, 0))
+	Matrix4 modelMatrixP = Matrix4::Translation(Vector3(6000, 500, 6000))
+		//* Matrix4::Rotation(-90.0f, Vector3(1, 0, 0)) //* Matrix4::Rotation(-90.0f, Vector3(0, 0, 1))
 		* Matrix4::Scale(Vector3(1000, 1000, 1000));
 
 	Matrix4 tempMatrix = textureMatrix * modelMatrixP;
@@ -799,7 +823,7 @@ inline void Renderer::DrawPyramid()
 
 	glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram()
 		, "modelMatrix"), 1, false, *&modelMatrixP.values);
-	glUniform4fv(glGetUniformLocation(currentShader->GetProgram(), "nodeColour"), 1, (float*)&Vector4(1,1,1,1));
+	//glUniform4fv(glGetUniformLocation(currentShader->GetProgram(), "nodeColour"), 1, (float*)&Vector4(1,1,1,1));
 	pyramidMesh->Draw();
 
 }
@@ -834,9 +858,17 @@ void Renderer::DrawText(const std::string& text, const Vector3& position, const 
 
 inline void Renderer::KeyBoardControl()
 {
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_U))
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_U))
 	{
 		autoCameraLock = !autoCameraLock;
+		if (autoCameraLock)
+		{
+			autoCameraPosition = 0;
+			camera->SetPosition(cameraPostions[0].position);
+			camera->SetPitch(cameraPostions[0].pitch);
+			camera->SetYaw(cameraPostions[0].yaw);
+			sceneNum = 0;
+		}
 	}
 	if (autoCameraLock) return;
 #pragma region PostProcessing(P 3 4 5)
@@ -871,5 +903,114 @@ inline void Renderer::KeyBoardControl()
 		showBoundingVolume = !showBoundingVolume;
 	}
 	
+}
+
+inline void Renderer::LoadAutoCamera()
+{
+	cameraPostions.push_back(CameraPosition(Vector3(-1731, 2769, -1616), -16, 226, 0)); // 0
+	cameraPostions.push_back(CameraPosition(Vector3(1736, 1096, 1785), -10, 228, 10));
+	cameraPostions.push_back(CameraPosition(Vector3(1733, 2145, 2426), -31, 133, 20));
+	cameraPostions.push_back(CameraPosition(Vector3(1825, 1262, 4753), -1, 32, 30));
+	cameraPostions.push_back(CameraPosition(Vector3(9320, 7719, 2833), -55, 105, 40)); // 4
+	cameraPostions.push_back(CameraPosition(Vector3(4445, 1213, 3229), -21, 150, 50));
+	cameraPostions.push_back(CameraPosition(Vector3(3545, 1130, 3588), -12, 226, 60));
+	cameraPostions.push_back(CameraPosition(Vector3(3617, 1130, 4405), -14, 317, 70));
+	cameraPostions.push_back(CameraPosition(Vector3(3699, 847, 3708), 18, 226, 80));
+	cameraPostions.push_back(CameraPosition(Vector3(4000, 1000, 4000), 18, 226, 100)); // 9
+
+	cameraPostions.push_back(CameraPosition(Vector3(-500, 4000, -500), -18, 226, 110)); // 10
+	cameraPostions.push_back(CameraPosition(Vector3(2648, 2517, 9092), -25, 318, 120)); 
+	cameraPostions.push_back(CameraPosition(Vector3(9291, 2718, 9300), -26, 50, 120)); 
+
+	//cameraPostions.push_back(CameraPosition(Vector3(4000.0f, 1000.0f, 4000.0f), 18, 226)); // 12
+
+
+	cameraMoveDirection = cameraPostions[1].position - cameraPostions[0].position;
+	autoCameraPosition = 0;
+	camera->SetPosition(cameraPostions[0].position);
+	camera->SetPitch(cameraPostions[0].pitch);
+	camera->SetYaw(cameraPostions[0].yaw);
+}
+
+inline void Renderer::AutoCamera(float msec)
+{
+	if (autoCameraPosition + 1 >= cameraPostions.size())
+	{
+		autoCameraLock = false;
+		return;
+	}
+	CameraPosition target = cameraPostions[autoCameraPosition + 1];
+	float wholeDis = (cameraPostions[autoCameraPosition].position - target.position).Length();
+	
+	Vector3 targetDir = target.position - camera->GetPosition();
+	float distance = targetDir.Length();
+
+	float ratio = min(0.99, distance / wholeDis);
+
+	if (autoCameraPosition == 4)
+	{
+		if (ratio < 0.4f)
+		{
+			showPostProcessing = false;
+		}
+		else if (ratio < 0.75f)
+		{
+			processShader = blurryShader;
+		}
+		else if (ratio < 0.9f)
+		{
+			processShader = edgeShader;
+		}
+		else if (ratio < 0.99f)
+		{
+			showPostProcessing = true;
+			processShader = doubleVisionShader;
+		}
+
+	}
+	else
+	{
+		if (autoCameraPosition == 2)
+		{
+			showBoundingVolume = true;
+		}
+		if (autoCameraPosition == 3)
+		{
+			showBoundingVolume = false;
+		}
+	}
+
+	if (ratio < 0.01f)
+	{
+		autoCameraPosition++;
+		return;
+	}
+	else
+	{
+		if (autoCameraPosition == 8 && sceneNum == 1)
+		{
+			autoCameraPosition++;
+			return;
+		}
+	}
+
+	targetDir.Normalise();
+	cameraMoveDirection.Normalise();
+	Vector3 steering = (targetDir - cameraMoveDirection) * ratio / 5;
+
+	cameraMoveDirection += steering;
+	cameraMoveDirection.Normalise();
+
+	camera->SetPosition(camera->GetPosition() + cameraMoveDirection * msec * sin((1 - ratio) * PI) * 2);
+
+	float pitchOffset = target.pitch - cameraPostions[autoCameraPosition].pitch;
+	if (pitchOffset > 180) pitchOffset -= 360;
+	if (pitchOffset < -180) pitchOffset += 360;
+	camera->SetPitch(cameraPostions[autoCameraPosition].pitch + pitchOffset * (1 - ratio));
+
+	float yawOffset = target.yaw - cameraPostions[autoCameraPosition].yaw;
+	if (yawOffset > 180) yawOffset -= 360;
+	if (yawOffset < -180) yawOffset += 360;
+	camera->SetYaw(cameraPostions[autoCameraPosition].yaw + yawOffset * (1 - ratio));
 }
 

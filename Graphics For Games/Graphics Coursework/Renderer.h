@@ -14,6 +14,15 @@
 #define POST_PASSES 2
 #define SHADOWSIZE 2048
 
+struct CameraPosition
+{
+	Vector3 position;
+	float pitch;
+	float yaw;
+	float time;
+	CameraPosition(Vector3 pos, float p, float y, float t) :position(pos), pitch(p), yaw(y), time(t * 1000) {}
+};
+
 class Renderer :
 	public OGLRenderer
 {
@@ -116,9 +125,13 @@ protected:
 	bool showBoundingVolume;
 	bool showPostProcessing;
 	int sceneNum;
-	float FPScounter;
+	float autoCameraTime;
+	int autoCameraPosition;
+	Vector3 cameraMoveDirection;
+	vector<CameraPosition> cameraPostions;
+
 	int FPS;
-	Font* basicFont;	//A font! a basic one...
+	Font* basicFont;	
 	Window* window;
 private:
 	inline void InitScene0();
@@ -141,6 +154,8 @@ private:
 	inline void DrawPyramid();
 
 	inline void KeyBoardControl();
+	inline void LoadAutoCamera();
+	inline void AutoCamera(float msec);
 
 };
 
