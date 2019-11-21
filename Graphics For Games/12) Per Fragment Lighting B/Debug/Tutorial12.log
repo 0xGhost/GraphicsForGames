@@ -1,3 +1,13 @@
 ﻿  Renderer.cpp
-C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\12) Per Fragment Lighting B\Renderer.cpp(50,16): warning C4154:  deletion of an array expression; conversion to pointer supplied
-  Tutorial12.vcxproj -> C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Debug\Tutorial 12 - Real-time Lighting B.exe
+C:\Users\xxlya\source\repos\0xGhost\GraphicsForGames\nclgl\Keyboard.h(1,1): warning C4819:  The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
+  Tutorial12.cpp
+C:\Users\xxlya\source\repos\0xGhost\GraphicsForGames\Graphics For Games\12) Per Fragment Lighting B\Renderer.cpp(50,16): warning C4154:  deletion of an array expression; conversion to pointer supplied
+  Generating Code...
+C:\Users\xxlya\source\repos\0xGhost\GraphicsForGames\NCLGL\Keyboard.h(1,1): warning C4819:  The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
+  LINK : C:\Users\xxlya\Source\Repos\0xGhost\GraphicsForGames\Graphics For Games\Debug\Tutorial 12 - Real-time Lighting B.exe not found or not built by the last incremental link; performing full link
+LINK : warning LNK4286: symbol '___glewGetUniformLocation' defined in 'glew32.lib(glew.obj)' is imported by 'Renderer.obj'
+LINK : warning LNK4286: symbol '___glewUniform1i' defined in 'glew32.lib(glew.obj)' is imported by 'Renderer.obj'
+LINK : warning LNK4286: symbol '___glewUniform3fv' defined in 'glew32.lib(glew.obj)' is imported by 'Renderer.obj'
+LINK : warning LNK4286: symbol '___glewUseProgram' defined in 'glew32.lib(glew.obj)' is imported by 'Renderer.obj'
+glew32.lib(glew.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'glew32.lib(glew.obj)' or at 'C:\Users\xxlya\Source\Repos\0xGhost\GraphicsForGames\Graphics For Games\Debug\vc120.pdb'; linking object as if no debug info
+  Tutorial12.vcxproj -> C:\Users\xxlya\Source\Repos\0xGhost\GraphicsForGames\Graphics For Games\Debug\Tutorial 12 - Real-time Lighting B.exe

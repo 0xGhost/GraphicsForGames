@@ -27,12 +27,12 @@ public:
 	GLuint GetGlossMap() { return glossTexture; }
 	Vector3* GetVertices() const { return vertices; }
 	GLuint GetNumVertices() const { return numVertices; }
-
+	void GenerateNormals();
+	void GenerateTangents();
 protected:
 	void BufferData();
 
-	void GenerateNormals();
-	void GenerateTangents();
+	
 	Vector3 GenerateTangent(const Vector3& a, const Vector3& b,
 		const Vector3& c, const Vector2& ta,
 		const Vector2& tb, const Vector2& tc);

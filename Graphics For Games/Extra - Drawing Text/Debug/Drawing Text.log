@@ -1,5 +1,1 @@
-﻿  Drawing Text.cpp
-  Renderer.cpp
-  TextMesh.cpp
-  Generating Code...
-LINK : fatal error LNK1104: cannot open file 'nclgl.lib'
+﻿  Drawing Text.vcxproj -> C:\Users\xxlya\Source\Repos\0xGhost\GraphicsForGames\Graphics For Games\Debug\Extra - Drawing Text.exe

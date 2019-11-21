@@ -3,8 +3,8 @@
 Renderer::Renderer(Window& parent) : OGLRenderer(parent)
 {
 	camera = new Camera(-8.0f, 40.0f, Vector3(-200.0f, 50.0f, 250.0f));
-	light = new Light(Vector3(-450.0f, 200.0f, 280.0f),
-		Vector4(1, 1, 1, 1), Vector4(1, 1, 1, 1), SpotLight, 5500.0f, Vector3(0,-1,0.1f), 50.0f);
+	light = new Light(Vector3(450.0f, 200.0f, 280.0f),
+		Vector4(1, 1, 1, 1), Vector4(1, 1, 1, 1), SpotLight, 5500.0f, Vector3(0.1f,-1,0.1f), 50.0f);
 
 	hellData = new MD5FileData(MESHDIR"hellknight.md5mesh");
 	hellNode = new MD5Node(*hellData);
@@ -137,10 +137,10 @@ void Renderer::DrawShadowScene()
 	else
 	{
 		projMatrix = Matrix4::Perspective(1.0f, 15000.0f,
-			(float)width / (float)height, 103.0f);
+			(float)width / (float)height, 105.0f);
 	}
 	viewMatrix = Matrix4::BuildViewMatrix(
-		light->GetPosition(), light->GetDirection());
+		light->GetPosition(), light->GetPosition() + light->GetDirection());
 	textureMatrix = biasMatrix * (projMatrix * viewMatrix);
 
 	UpdateShaderMatrices();

@@ -8,8 +8,6 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent), window(&parent), showB
 	BoundingBox::CreateBoxMesh();
 	camera = new Camera();
 	skyBoxQuad = Mesh::GenerateQuad();
-	
-	
 
 	quad = Mesh::GenerateQuad();
 	sphere = new OBJMesh();
@@ -17,6 +15,7 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent), window(&parent), showB
 	{
 		return;
 	}
+	basicFont = new Font(SOIL_load_OGL_texture(TEXTUREDIR"tahoma.tga", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_COMPRESS_TO_DXT), 16, 16);
 
 	
 	boundingVolumeShader = new Shader(SHADERDIR"BoundingVolumeVertex.glsl", SHADERDIR"BoundingVolumeFragment.glsl");
@@ -34,11 +33,12 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent), window(&parent), showB
 
 	InitPostProcessing();
 	showPostProcessing = false;
+	autoCameraLock = false;////////////////////////////////
 
 	InitScene1();
 	InitShadow();
 
-	sceneNum = 1;
+	sceneNum = 0;
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glEnable(GL_CULL_FACE);
@@ -50,7 +50,7 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent), window(&parent), showB
 
 Renderer::~Renderer()
 {
-	delete root;
+	delete[] root;
 	delete quad;
 	delete camera;
 	delete oceanMesh;
@@ -58,11 +58,6 @@ Renderer::~Renderer()
 	BoundingSphere::DeleteSphereMesh();
 	BoundingBox::DeleteBoxMesh();
 	currentShader = NULL;
-
-	//delete heightMap;
-	//delete ppQuad1;
-	//delete ppQuad2;
-	//delete mapCamera;
 
 	glDeleteTextures(2, bufferColourTex);
 	glDeleteTextures(1, &bufferDepthTex);
@@ -77,6 +72,10 @@ Renderer::~Renderer()
 
 void Renderer::UpdateScene(float msec)
 {
+	if ((camera->GetPosition() - Vector3(4000.0f, 1000.0f, 4000.0f)).Length() < 201.0f)
+		sceneNum = 1;
+	FPS = 1000.0f / msec;
+	KeyBoardControl();
 	projMatrix = perspectiveMatrix;
 	camera->UpdateCamera(msec);
 	viewMatrix = camera->BuildViewMatrix();
@@ -84,12 +83,11 @@ void Renderer::UpdateScene(float msec)
 	root[sceneNum]->Update(msec);
 	waterRotate = msec / 1000.0f;
 	waterNode->SetTextureMatrix(waterNode->GetTextureMatrix() * Matrix4::Rotation(waterRotate, Vector3(0.0f, 0.0f, 1.0f)));
-
 }
 
 void Renderer::RenderScene()
 {
-
+	
 	BuildNodeLists(root[sceneNum]);
 	SortNodeLists();
 
@@ -131,6 +129,18 @@ void Renderer::RenderScene()
 		DrawCombinedScene(); // Second render pass ...
 		
 	}
+	glDisable(GL_DEPTH_TEST);
+	SetCurrentShader(textureShader);
+	glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "diffuseTex"), 0);
+
+	Vector3 camPos = camera->GetPosition();
+	float camPit = camera->GetPitch();
+	float camYaw = camera->GetYaw();
+	DrawText("FPS:" + std::to_string(FPS), Vector3(0, 0, 0), 16.0f);
+	DrawText("cam pos:" + std::to_string((int)camPos.x) + ", " + std::to_string((int)camPos.y) + ", " + std::to_string((int)camPos.z), Vector3(0, 16, 0), 16.0f);
+	DrawText("Pit:" + std::to_string((int)camPit) + " Yaw:" + std::to_string((int)camYaw), Vector3(0, 32, 0), 16.0f);
+	//DrawText("This is perspective text!!!!", Vector3(0, 0, -1000), 64.0f, true);
+	glEnable(GL_DEPTH_TEST);
 
 	SwapBuffers();
 	ClearNodeLists();
@@ -217,7 +227,7 @@ void Renderer::DrawNode(SceneNode* n)
 		glUniform3fv(glGetUniformLocation(currentShader->GetProgram(), "cameraPos"), 1, (float*)& camera->GetPosition());
 		glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "useTexture"), (int)n->GetMesh()->GetTexture());
 		
-		SetShaderLight(*lights);
+		SetShaderLight(lights[0]);
 		n->Draw(*this);
 		modelMatrix = temp;
 
@@ -247,7 +257,7 @@ void Renderer::DrawNode(SceneNode* n)
 
 inline void Renderer::InitScene0()
 {
-	camera->SetPosition(Vector3(0, 100, 750));
+	//camera->SetPosition(Vector3(0, 100, 750));
 	projMatrix = perspectiveMatrix;
 
 	textureShader = new Shader(SHADERDIR"TexturedVertex.glsl", SHADERDIR"TexturedFragment.glsl");
@@ -259,6 +269,7 @@ inline void Renderer::InitScene0()
 
 	root[0] = new SceneNode();
 	//root->SetBoundingVolume(new )
+	
 	for (int i = 0; i < 5; ++i) {
 		SceneNode* s = new SceneNode();
 		s->SetColour(Vector4(1.0f, 1.0f, 1.0f, 0.5f));
@@ -266,7 +277,7 @@ inline void Renderer::InitScene0()
 			* Matrix4::Rotation(45, Vector3(1.0f, 0.0f, 0.0f)));
 		s->SetModelScale(Vector3(100.0f, 100.0f, 100.0f));
 		s->SetMesh(quad);
-
+		s->SetShader(sceneShader);
 		s->SetBoundingVolume(new AABoundingBox(s->GetWorldTransform(), s->GetModelScale(), quad));
 		//s->SetBoundingVolume(new BoundingSphere(s->GetWorldTransform(), s->GetModelScale(), quad));
 		root[0]->AddChild(s);
@@ -275,7 +286,7 @@ inline void Renderer::InitScene0()
 	// portal
 	SceneNode* p = new SceneNode();
 	p->SetColour(Vector4(1.0f, 1.0f, 1.0f, 0.5f));
-	p->SetTransform(Matrix4::Translation(Vector3(4000, 1000.0f, 4000.0f)));
+	p->SetTransform(Matrix4::Translation(Vector3(4000.0f, 1000.0f, 4000.0f)));
 	p->SetModelScale(Vector3(200.0f, 200.0f, 200.0f));
 	p->SetMesh(sphere);
 	Shader* portalShader = new Shader(SHADERDIR"portalVertex.glsl", SHADERDIR"portalFragment.glsl");
@@ -347,19 +358,10 @@ inline void Renderer::LoadOcean()
 		SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS));
 	SetTextureRepeating(oceanMesh->GetTexture(), true);
 	SetTextureRepeating(oceanMesh->GetBumpMap(), true);
-	shadowOceanShader = new Shader(SHADERDIR"OceanShadowVertex.glsl", SHADERDIR"bumpFragment.glsl");
-	if (!shadowOceanShader->LinkProgram()) 
+	shadowOceanShader = new Shader(SHADERDIR"OceanShadowVertex.glsl", SHADERDIR"shadowFrag.glsl");
+	shadowOceanSceneShader = new Shader(SHADERDIR"OceanShadowSceneVertex.glsl", SHADERDIR"shadowscenefrag.glsl");
+	if (!shadowOceanShader->LinkProgram() || !shadowOceanSceneShader->LinkProgram())
 		return;
-	/*
-	oceanNode = new SceneNode();
-	oceanNode->SetShader(shadowSceneShader);
-	oceanNode->SetMesh(oceanMesh);
-	oceanNode->SetColour(Vector4(1.0f, 1.0f, 1.0f, 0.5f));
-	oceanNode->SetTransform(Matrix4::Translation(Vector3(0, 0, 0)));
-	oceanNode->SetModelScale(Vector3(1.0f, 1.0f, 1.0f));
-	oceanNode->SetBoundingVolume(new AABoundingBox(oceanNode->GetWorldTransform(), oceanNode->GetModelScale(), oceanMesh));
-	return oceanNode;
-	*/
 }
 
 inline SceneNode* Renderer::LoadWater()
@@ -454,15 +456,15 @@ inline SceneNode* Renderer::LoadHellKnight()
 inline void Renderer::LoadLights()
 {
 	numberOfLight = 1;
-	lights = new Light * [numberOfLight];
-	//lights[0] = new Light(Vector3((RAW_HEIGHT * HEIGHTMAP_X / 2.0f),
-		//500.0f, (RAW_HEIGHT * HEIGHTMAP_Z / 2.0f)),
-		//Vector4(1.0, 1.0, 0.5, 1.0), Vector4(1.0, 0.5, 0.5, 1.0), DirectionLight, (RAW_WIDTH * HEIGHTMAP_X) / 2.0f, Vector3(0, -1, 0), 60.0f);
-	Vector3 d = Vector3(0, -1,0);
-	//Vector3 d = Vector3(-0.15, -1, 0.15);
-	d.Normalise();
-	lights[0] = new Light(Vector3(0.0f, 500.0f, 0.0f),
-		Vector4(1, 1, 1, 1), Vector4(1, 1, 1, 1), SpotLight, 5500.0f, d, 80.0f);
+	lights = new Light* [2];
+	lights[0] = new Light(Vector3((RAW_HEIGHT * HEIGHTMAP_X / 2.0f),
+		500.0f, (RAW_HEIGHT * HEIGHTMAP_Z / 2.0f)),
+		Vector4(1.0, 1.0, 0.5, 1.0), Vector4(1.0, 0.5, 0.5, 1.0), DirectionLight, (RAW_WIDTH * HEIGHTMAP_X) / 2.0f, Vector3(0, -1, 0), 60.0f);
+	
+	lights[1] = new Light(Vector3(8000.0f, 2000.0f, 8000.0f),
+		Vector4(1, 1, 1, 1), Vector4(1, 1, 1, 1), SpotLight, 10000.0f, Vector3(-0.4, -1, -0.4), 45.0f);
+
+	
 }
 
 inline void Renderer::InitPostProcessing()
@@ -473,11 +475,15 @@ inline void Renderer::InitPostProcessing()
 	Vector3 quad2Positions[4] = { Vector3(0.5f, -1.0f, 1.0f),Vector3(0.5f, -0.5f, 1.0f),Vector3(1.0f, -1.0f, 1.0f),Vector3(1.0f, -0.5f, 1.0f) };
 	ppQuad2 = Mesh::GenerateQuad(quad2Positions);
 	
-	//processShader = new Shader(SHADERDIR "TexturedVertex.glsl", SHADERDIR "processfrag.glsl");
-	//processShader = new Shader(SHADERDIR "TexturedVertex.glsl", SHADERDIR "edgeFrag.glsl");
-	processShader = new Shader(SHADERDIR "TexturedVertex.glsl", SHADERDIR "doubleVisionFrag.glsl");
+	blurryShader = new Shader(SHADERDIR "TexturedVertex.glsl", SHADERDIR "processfrag.glsl");
+	edgeShader = new Shader(SHADERDIR "TexturedVertex.glsl", SHADERDIR "edgeFrag.glsl");
+	doubleVisionShader = new Shader(SHADERDIR "TexturedVertex.glsl", SHADERDIR "doubleVisionFrag.glsl");
 
-	if (!processShader->LinkProgram())
+	processShader = doubleVisionShader;
+
+	if (!blurryShader->LinkProgram() 
+		|| !edgeShader->LinkProgram() 
+		|| !doubleVisionShader->LinkProgram())
 	{
 		return;
 	}
@@ -578,7 +584,7 @@ void Renderer::DrawPostProcess()
 
 	glUniform2f(glGetUniformLocation(currentShader->GetProgram(), "pixelSize"), 1.0f / width, 1.0f / height);
 
-	for (int i = 0; i < POST_PASSES; i++)
+	for (int i = 0; i < pass; i++)
 	{
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, bufferColourTex[1], 0);
 		glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "isVertical"), 0);
@@ -683,19 +689,22 @@ void Renderer::DrawShadowScene()
 
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 
-	SetCurrentShader(shadowShader);
 
-	if (lights[0]->GetType() == DirectionLight)
+
+
+	SetCurrentShader(shadowOceanShader);
+
+	if (lights[1]->GetType() == DirectionLight)
 	{
 		projMatrix = Matrix4::Orthographic(-1, 20000, 1000, -1000, 1000, -1000);
 	}
 	else
 	{
-		projMatrix = Matrix4::Perspective(1.0f, 15000.0f,
-			(float)width / (float)height, 105.0f);
+		projMatrix = Matrix4::Perspective(10.0f, 10000.0f,
+			(float)width / (float)height, 90.0f);
 	}
 	viewMatrix = Matrix4::BuildViewMatrix(
-		lights[0]->GetPosition(), /*lights[0]->GetPosition() +*/ Vector3(1,0,1));
+		lights[1]->GetPosition(), lights[1]->GetPosition() + lights[1]->GetDirection());
 	textureMatrix = biasMatrix * (projMatrix * viewMatrix);
 
 	UpdateShaderMatrices();
@@ -703,16 +712,21 @@ void Renderer::DrawShadowScene()
 	
 	
 	DrawOcean();
+
+	SetCurrentShader(shadowShader);
+	UpdateShaderMatrices();
+
 	DrawPyramid();
 	glUseProgram(0);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glViewport(0, 0, width, height);
-	projMatrix = Matrix4::Perspective(1.0f, 15000.0f, (float)width / (float)height, 45.0f);
+	projMatrix = perspectiveMatrix;//Matrix4::Perspective(1.0f, 15000.0f, (float)width / (float)height, 45.0f);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void Renderer::DrawCombinedScene() {
-	SetCurrentShader(shadowSceneShader);
+
+	SetCurrentShader(shadowOceanSceneShader);
 	glUniform1i(glGetUniformLocation(currentShader->GetProgram(),
 		"diffuseTex"), 0);
 	glUniform1i(glGetUniformLocation(currentShader->GetProgram(),
@@ -723,7 +737,7 @@ void Renderer::DrawCombinedScene() {
 	glUniform3fv(glGetUniformLocation(currentShader->GetProgram(),
 		"cameraPos"), 1, (float*)& camera->GetPosition());
 
-	SetShaderLight(*lights);
+	SetShaderLight(lights[1]);
 
 	glActiveTexture(GL_TEXTURE8);
 	glBindTexture(GL_TEXTURE_2D, shadowTex);
@@ -732,11 +746,16 @@ void Renderer::DrawCombinedScene() {
 	viewMatrix = camera->BuildViewMatrix();
 	UpdateShaderMatrices();
 
-	//DrawPyramid();
+	
 	DrawOcean();
+
+
+	SetCurrentShader(shadowSceneShader);
+	UpdateShaderMatrices();
+	DrawPyramid();
 	//DrawFloor();
 	//DrawMesh();
-	DrawPyramid();
+	//DrawPyramid();
 	glUseProgram(0);
 }
 
@@ -749,10 +768,15 @@ inline void Renderer::DrawOcean()
 inline void Renderer::LoadPyramid()
 {
 	pyramidMesh = new OBJMesh();
+	
 	if (!pyramidMesh->LoadOBJMesh(MESHDIR"pyramid.obj"))
 	{
 		return;
 	}
+
+	pyramidMesh->GenerateNormals();
+	pyramidMesh->GenerateTangents();
+	
 	
 	pyramidMesh->SetTexture(SOIL_load_OGL_texture(TEXTUREDIR"brick.tga", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0));
 	if (!pyramidMesh->GetTexture()) return;
@@ -764,11 +788,9 @@ inline void Renderer::LoadPyramid()
 
 inline void Renderer::DrawPyramid()
 {
-
-
-	Matrix4 modelMatrixP = Matrix4::Translation(Vector3(500, 800, 300))
+	Matrix4 modelMatrixP = Matrix4::Translation(Vector3(6000, 1000, 6000))
 		* Matrix4::Rotation(-90.0f, Vector3(1, 0, 0))
-		* Matrix4::Scale(Vector3(800, 800, 800));
+		* Matrix4::Scale(Vector3(1000, 1000, 1000));
 
 	Matrix4 tempMatrix = textureMatrix * modelMatrixP;
 
@@ -777,7 +799,77 @@ inline void Renderer::DrawPyramid()
 
 	glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram()
 		, "modelMatrix"), 1, false, *&modelMatrixP.values);
-	
+	glUniform4fv(glGetUniformLocation(currentShader->GetProgram(), "nodeColour"), 1, (float*)&Vector4(1,1,1,1));
 	pyramidMesh->Draw();
 
 }
+
+void Renderer::DrawText(const std::string& text, const Vector3& position, const float size, const bool perspective) {
+	//Create a new temporary TextMesh, using our line of text and our font
+	TextMesh* mesh = new TextMesh(text, *basicFont);
+	Matrix4 temp[3] = { modelMatrix, viewMatrix, projMatrix };
+	//This just does simple matrix setup to render in either perspective or
+	//orthographic mode, there's nothing here that's particularly tricky.
+	if (perspective) {
+		modelMatrix = Matrix4::Translation(position) * Matrix4::Scale(Vector3(size, size, 1));
+		viewMatrix = camera->BuildViewMatrix();
+		projMatrix = Matrix4::Perspective(1.0f, 10000.0f, (float)width / (float)height, 45.0f);
+	}
+	else {
+		//In ortho mode, we subtract the y from the height, so that a height of 0
+		//is at the top left of the screen, which is more intuitive
+		//(for me anyway...)
+		modelMatrix = Matrix4::Translation(Vector3(position.x, height - position.y, position.z)) * Matrix4::Scale(Vector3(size, size, 1));
+		viewMatrix.ToIdentity();
+		projMatrix = Matrix4::Orthographic(-1.0f, 1.0f, (float)width, 0.0f, (float)height, 0.0f);
+	}
+	//Either way, we update the matrices, and draw the mesh
+	UpdateShaderMatrices();
+	mesh->Draw();
+	modelMatrix = temp[0];
+	viewMatrix = temp[1];
+	projMatrix = temp[2];
+	delete mesh; //Once it's drawn, we don't need it anymore!
+}
+
+inline void Renderer::KeyBoardControl()
+{
+	if (Window::GetKeyboard()->KeyDown(KEYBOARD_U))
+	{
+		autoCameraLock = !autoCameraLock;
+	}
+	if (autoCameraLock) return;
+#pragma region PostProcessing(P 3 4 5)
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_P))
+	{
+		showPostProcessing = !showPostProcessing;
+	}
+	if (Window::GetKeyboard()->KeyDown(KEYBOARD_3))
+	{
+		processShader = doubleVisionShader;
+	}
+	if (Window::GetKeyboard()->KeyDown(KEYBOARD_4))
+	{
+		processShader = edgeShader;
+	}
+	if (Window::GetKeyboard()->KeyDown(KEYBOARD_5))
+	{
+		processShader = blurryShader;
+	}
+#pragma endregion
+	if (Window::GetKeyboard()->KeyDown(KEYBOARD_1))
+	{
+		sceneNum = 0;
+	}
+	if (Window::GetKeyboard()->KeyDown(KEYBOARD_2))
+	{
+		sceneNum = 1;
+		camera->SetPosition(Vector3(0, 500, 0));
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_B))
+	{
+		showBoundingVolume = !showBoundingVolume;
+	}
+	
+}
+

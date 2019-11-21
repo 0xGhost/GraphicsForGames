@@ -7,6 +7,7 @@
 #include "..\nclgl\Frustum.h"
 #include "../../nclgl/MD5Mesh.h"
 #include "../../nclgl/MD5Node.h"
+#include "textmesh.h"
 #include <algorithm>
 
 #define LIGHTNUM 8
@@ -23,9 +24,11 @@ public:
 	virtual void RenderScene();
 	virtual void UpdateScene(float msec);
 
+	Window* GetWindow() { return window; }
+
+	void TogglePostProcssing() { showPostProcessing = !showPostProcessing; }
 	void ToggleBoundingVolume() { showBoundingVolume = !showBoundingVolume; }
 
-	Window* GetWindow() { return window; }
 
 protected:
 	void FillBuffers(); //G- Buffer Fill Render Pass
@@ -40,12 +43,17 @@ protected:
 	void DrawNodes();
 	void DrawNode(SceneNode* n);
 
+	void DrawText(const std::string& text, const Vector3& position, const float size = 10.0f, const bool perspective = false);
+
 	Shader* heightMapShader;
 	Shader* boundingVolumeShader;
 	Shader* sceneShader; // Shader to fill our GBuffers
 	Shader* pointlightShader; // Shader to calculate lighting
 	Shader* combineShader; // shader to stick it all together
 	Shader* processShader;
+	Shader* edgeShader;
+	Shader* doubleVisionShader;
+	Shader* blurryShader;
 	Shader* skeletonShader;
 	Shader* textureShader;
 	Shader* reflectShader;
@@ -53,7 +61,7 @@ protected:
 	Shader* shadowShader;
 	Shader* shadowSceneShader;
 	Shader* shadowOceanShader;
-
+	Shader* shadowOceanSceneShader;
 
 	SceneNode* heightMapNode;
 	SceneNode* hellKnightNode;
@@ -104,10 +112,13 @@ protected:
 	vector<SceneNode*> transparentNodeList;
 	vector<SceneNode*> nodeList;
 
+	bool autoCameraLock;
 	bool showBoundingVolume;
 	bool showPostProcessing;
 	int sceneNum;
-
+	float FPScounter;
+	int FPS;
+	Font* basicFont;	//A font! a basic one...
 	Window* window;
 private:
 	inline void InitScene0();
@@ -128,6 +139,9 @@ private:
 	inline void DrawOcean();
 	inline void LoadPyramid();
 	inline void DrawPyramid();
+
+	inline void KeyBoardControl();
+
 };
 
 

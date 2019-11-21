@@ -57,7 +57,7 @@ void main(void) {
 		vec3 halfDir = normalize(incident + viewDir);
 
 		float rFactor = max(0.0, dot(halfDir, normal));
-		float sFactor = pow(rFactor, 1.0f * 50.0f);
+		float sFactor = pow(rFactor, 1.0f * 30.0f);
 		float shadow = 1.0; // New !
 
 		if (IN.shadowProj.w > 0.0) { // New !
@@ -66,7 +66,7 @@ void main(void) {
 		lambert *= shadow; // New !
 
 		vec3 colour = (diffuse.rgb * lightColour[i].rgb);
-		colour += (lightSpecularColour[i].rgb * sFactor) * 0.33;
+		colour += (lightSpecularColour[i].rgb * sFactor);// *0.33;
 		fragColour = vec4(colour * atten * lambert, diffuse.a) * (1.0 / LightNum);
 	
 		fragColour.rgb = fragColour.rgb * (((lightType[i] & SpotLight) != 0 && angle < cos(radians(lightAngle[i]))) == false ? 1.0f : 0.0f)
