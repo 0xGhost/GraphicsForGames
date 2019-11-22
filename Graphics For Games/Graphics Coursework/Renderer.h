@@ -8,6 +8,7 @@
 #include "../../nclgl/MD5Mesh.h"
 #include "../../nclgl/MD5Node.h"
 #include "textmesh.h"
+#include "ParticleEmitter.h"
 #include <algorithm>
 
 #define LIGHTNUM 8
@@ -40,6 +41,7 @@ public:
 
 
 protected:
+	void SetShaderParticleSize(float f) { glUniform1f(glGetUniformLocation(currentShader->GetProgram(), "particleSize"), f);  }
 	void FillBuffers(); //G- Buffer Fill Render Pass
 	void DrawPointLights(); // Lighting Render Pass
 	void CombineBuffers(); // Combination Render Pass
@@ -71,6 +73,7 @@ protected:
 	Shader* shadowSceneShader;
 	Shader* shadowOceanShader;
 	Shader* shadowOceanSceneShader;
+	Shader* particleEmitterShader;
 
 	SceneNode* heightMapNode;
 	SceneNode* hellKnightNode;
@@ -79,6 +82,7 @@ protected:
 	SceneNode* pyramidNode;
 	SceneNode* oceanNode;
 
+	ParticleEmitter* emitter;
 	OBJMesh* pyramidMesh;
 	Mesh* oceanMesh;
 	size_t numberOfLight;
@@ -152,6 +156,7 @@ private:
 	inline void DrawOcean();
 	inline void LoadPyramid();
 	inline void DrawPyramid();
+	inline void DrawEmitter();
 
 	inline void KeyBoardControl();
 	inline void LoadAutoCamera();

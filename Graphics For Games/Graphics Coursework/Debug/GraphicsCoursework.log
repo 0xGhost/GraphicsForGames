@@ -1,7 +1,8 @@
 ﻿  Renderer.cpp
-C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Graphics Coursework\Renderer.cpp(55,6): warning C4101:  'a': unreferenced local variable
-C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Graphics Coursework\Renderer.cpp(80,16): warning C4244:  '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Graphics Coursework\Renderer.cpp(473,88): warning C4305:  'argument': truncation from 'double' to 'const float'
-C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Graphics Coursework\Renderer.cpp(937,29): warning C4018:  '>=': signed/unsigned mismatch
-C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Graphics Coursework\Renderer.cpp(948,14): warning C4244:  'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Graphics Coursework\Renderer.cpp(60,6): warning C4101:  'a': unreferenced local variable
+C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Graphics Coursework\Renderer.cpp(86,16): warning C4244:  '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Graphics Coursework\Renderer.cpp(485,88): warning C4305:  'argument': truncation from 'double' to 'const float'
+C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Graphics Coursework\Renderer.cpp(850,30): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Graphics Coursework\Renderer.cpp(1000,29): warning C4018:  '>=': signed/unsigned mismatch
+C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Graphics Coursework\Renderer.cpp(1011,14): warning C4244:  'initializing': conversion from 'double' to 'float', possible loss of data
   GraphicsCoursework.vcxproj -> C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Debug\GraphicsCoursework1.exe

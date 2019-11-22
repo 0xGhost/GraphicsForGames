@@ -35,15 +35,33 @@ void main(void) {
 
 	mat3 normalMatrix = transpose(inverse(mat3(modelMatrix)));
 
-	OUT.normal = normalize(normalMatrix * normalize(normal));
-	OUT.tangent = normalize(normalMatrix * normalize(tangent));
-	OUT.binormal = normalize(normalMatrix * normalize(cross(normal, tangent)));
-
-
 	vec3 newPos = position;//
 
 	newPos.y = newPos.y + (sin(time / 1000 + (newPos.x) / 300) - cos(2 * (time / 1000 + (newPos.x) / 300))) * 60
 		+ (sin(time / 1000 + (newPos.z) / 500) - cos(2 * (time / 1000 + (newPos.z) / 500))) * 60;//
+
+	float newPosYTan = (sin(time / 1000 + (newPos.x + 1) / 300) - cos(2 * (time / 1000 + (newPos.x + 1) / 300))) * 60
+		+ (sin(time / 1000 + (newPos.z) / 500) - cos(2 * (time / 1000 + (newPos.z) / 500))) * 60;//
+
+	float newPosYBin = (sin(time / 1000 + (newPos.x) / 300) - cos(2 * (time / 1000 + (newPos.x) / 300))) * 60
+		+ (sin(time / 1000 + (newPos.z - 1) / 500) - cos(2 * (time / 1000 + (newPos.z - 1) / 500))) * 60;//
+
+
+
+
+	vec3 newTan = normalize(normalMatrix * normalize(tangent));
+	newTan.y = (newPosYTan - newPos.y);
+
+	vec3 newBin = normalize(normalMatrix * normalize(cross(normal, tangent)));
+	newBin.y = (newPosYBin - newPos.y);
+
+
+	OUT.tangent = normalize(newTan);
+	OUT.binormal = normalize(newBin);
+	
+	OUT.normal = normalize(cross(newTan, newBin));
+
+	
 
 
 	OUT.shadowProj = (textureMatrix * vec4(newPos + (normal * 15), 1));

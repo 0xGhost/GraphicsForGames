@@ -22,14 +22,27 @@ out Vertex{
 } OUT;
 
 void main(void) {
+
 	OUT.colour = colour;
 	OUT.texCoord = (textureMatrix * vec4(texCoord, 0.0, 1.0)).xy;
 
 	mat3 normalMatrix = transpose(inverse(mat3(modelMatrix)));
 
-	OUT.normal = normalize(normalMatrix * normalize(normal));
-	OUT.tangent = normalize(normalMatrix * normalize(tangent));
-	OUT.binormal = normalize(normalMatrix * normalize(cross(normal, tangent)));
+
+	vec3 newNor = normalize(normalMatrix * normalize(normal));
+	newNor.x = newNor.x * min(time, 10000) / 10000;
+	newNor.z = newNor.z * min(time, 10000) / 10000;
+	OUT.normal = normalize(newNor);// normalize(normalMatrix * normalize(normal));
+	
+	vec3 newTan = normalize(normalMatrix * normalize(tangent));
+	newTan.y = newTan.y * min(time, 10000) / 10000;
+	newTan.z = newTan.z * min(time, 10000) / 10000;
+	OUT.tangent = normalize(newTan);// normalize(normalMatrix * normalize(tangent));
+
+	vec3 newBin = normalize(normalMatrix * normalize(cross(normal, tangent)));
+	newBin.x = newBin.x * min(time, 10000) / 10000;
+	newBin.y = newBin.y * min(time, 10000) / 10000;
+	OUT.binormal = normalize(newBin);
 
 
 	vec3 newPos = position;//

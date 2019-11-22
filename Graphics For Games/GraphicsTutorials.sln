@@ -79,6 +79,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraphicsCoursework", "Graph
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Extra - Drawing Text", "Extra - Drawing Text\Drawing Text.vcxproj", "{D0AFE823-365D-49D6-B9AD-B417C23A4D1A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Extra - Geometry Shaders", "Extra - Geometry Shaders\Geometry.vcxproj", "{867248B2-6D91-45C4-B4CE-64AD14C4D373}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -157,6 +159,10 @@ Global
 		{D0AFE823-365D-49D6-B9AD-B417C23A4D1A}.Debug|Win32.Build.0 = Debug|Win32
 		{D0AFE823-365D-49D6-B9AD-B417C23A4D1A}.Release|Win32.ActiveCfg = Release|Win32
 		{D0AFE823-365D-49D6-B9AD-B417C23A4D1A}.Release|Win32.Build.0 = Release|Win32
+		{867248B2-6D91-45C4-B4CE-64AD14C4D373}.Debug|Win32.ActiveCfg = Debug|Win32
+		{867248B2-6D91-45C4-B4CE-64AD14C4D373}.Debug|Win32.Build.0 = Debug|Win32
+		{867248B2-6D91-45C4-B4CE-64AD14C4D373}.Release|Win32.ActiveCfg = Release|Win32
+		{867248B2-6D91-45C4-B4CE-64AD14C4D373}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -178,6 +184,7 @@ Global
 		{5E5378FE-275C-4B32-935D-22E7A4AD5AA3} = {26FF1E94-61DD-4E24-A071-50FA11CAC038}
 		{55C75BC7-89C2-4B38-8118-CF8C26426E7A} = {26FF1E94-61DD-4E24-A071-50FA11CAC038}
 		{909A2CFC-6E55-4776-8B60-93B44103A9CF} = {B12FA29E-1613-4E55-9C1D-B7DCD8A760D8}
+		{867248B2-6D91-45C4-B4CE-64AD14C4D373} = {B12FA29E-1613-4E55-9C1D-B7DCD8A760D8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7621F3D3-B5CF-42E0-8443-A33E59BB86F9}

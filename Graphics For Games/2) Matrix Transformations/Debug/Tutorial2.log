@@ -1,6 +1,1 @@
-﻿  Renderer.cpp
-  tutorial2.cpp
-  Generating Code...
-LINK : warning LNK4286: symbol '___glewUseProgram' defined in 'glew32.lib(glew.obj)' is imported by 'Renderer.obj'
-glew32.lib(glew.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'glew32.lib(glew.obj)' or at 'C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Debug\vc120.pdb'; linking object as if no debug info
-  Tutorial2.vcxproj -> C:\Users\b9010077\source\repos\Graphic\Download\Graphics For Games\Debug\Tutorial 02 - Matrix transformations.exe
+﻿

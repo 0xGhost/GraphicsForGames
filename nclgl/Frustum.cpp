@@ -19,7 +19,7 @@ bool Frustum::InsideFrustum(SceneNode& n)
 {
 	for (int i = 0; i < 6; i++)
 	{
-#if 1 // my version
+#if 1 // poor version
 		if (n.GetBoundingVolume() && !n.GetBoundingVolume()->IsInPlane(planes[i])) 
 		{ 
 			return false; 

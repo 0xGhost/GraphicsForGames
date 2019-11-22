@@ -18,6 +18,11 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent), window(&parent), showB
 	}
 	basicFont = new Font(SOIL_load_OGL_texture(TEXTUREDIR"tahoma.tga", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_COMPRESS_TO_DXT), 16, 16);
 
+	particleEmitterShader = new Shader("vertex.glsl",
+		"fragment.glsl",
+		"geometry.glsl");
+
+	if (!particleEmitterShader->LinkProgram()) return;
 	
 	boundingVolumeShader = new Shader(SHADERDIR"BoundingVolumeVertex.glsl", SHADERDIR"BoundingVolumeFragment.glsl");
 	if (!boundingVolumeShader->LinkProgram()) return;
@@ -31,7 +36,7 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent), window(&parent), showB
 	LoadLights();
 	InitScene0();
 	
-
+	emitter = new ParticleEmitter();
 	InitPostProcessing();
 	showBoundingVolume = false;
 	showPostProcessing = false;
@@ -58,6 +63,7 @@ Renderer::~Renderer()
 	delete camera;
 	delete oceanMesh;
 	delete skyBoxQuad;
+	delete emitter;
 	BoundingSphere::DeleteSphereMesh();
 	BoundingBox::DeleteBoxMesh();
 	currentShader = NULL;
@@ -89,6 +95,7 @@ void Renderer::UpdateScene(float msec)
 	root[sceneNum]->Update(msec);
 	waterRotate = msec / 1000.0f;
 	waterNode->SetTextureMatrix(waterNode->GetTextureMatrix() * Matrix4::Rotation(waterRotate, Vector3(0.0f, 0.0f, 1.0f)));
+	emitter->Update(msec);
 }
 
 void Renderer::RenderScene()
@@ -106,6 +113,7 @@ void Renderer::RenderScene()
 		SetCurrentShader(sceneShader);
 		UpdateShaderMatrices();
 		DrawNodes();
+		//DrawEmitter();
 		DrawSkybox(sceneNum);
 
 		// draw map from mapCamera to FBO0
@@ -118,6 +126,7 @@ void Renderer::RenderScene()
 		projMatrix = perspectiveMatrix;
 		UpdateShaderMatrices();
 		DrawNodes();
+		
 		showBoundingVolume = temp;
 
 		DrawPostProcess();
@@ -125,14 +134,17 @@ void Renderer::RenderScene()
 	}
 	if (sceneNum == 1)
 	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		glClearColor(0, 0, 0, 1);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		projMatrix = perspectiveMatrix;
 		UpdateShaderMatrices();
 		DrawSkybox(sceneNum);
 		//DrawOcean();
 		
+		
 		DrawShadowScene(); // First render pass ...
 		DrawCombinedScene(); // Second render pass ...
+		DrawEmitter();
 		
 	}
 	glDisable(GL_DEPTH_TEST);
@@ -828,6 +840,24 @@ inline void Renderer::DrawPyramid()
 
 }
 
+inline void Renderer::DrawEmitter()
+{
+	SetCurrentShader(particleEmitterShader);
+	glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "diffuseTex"), 0);
+	SetShaderParticleSize(emitter->GetParticleSize());
+	emitter->SetParticleSize(8.0f);
+	emitter->SetParticleVariance(1.0f);
+	emitter->SetLaunchParticles(16.0f);
+	emitter->SetParticleLifetime(2000.0f);
+	emitter->SetParticleSpeed(0.1f);
+	UpdateShaderMatrices();
+
+	emitter->Draw();
+
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glUseProgram(0);
+}
+
 void Renderer::DrawText(const std::string& text, const Vector3& position, const float size, const bool perspective) {
 	//Create a new temporary TextMesh, using our line of text and our font
 	TextMesh* mesh = new TextMesh(text, *basicFont);
@@ -871,29 +901,29 @@ inline void Renderer::KeyBoardControl()
 		}
 	}
 	if (autoCameraLock) return;
-#pragma region PostProcessing(P 3 4 5)
+#pragma region PostProcessing
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_P))
 	{
 		showPostProcessing = !showPostProcessing;
 	}
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_3))
+	if (Window::GetKeyboard()->KeyDown(KEYBOARD_U))
 	{
 		processShader = doubleVisionShader;
 	}
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_4))
+	if (Window::GetKeyboard()->KeyDown(KEYBOARD_I))
 	{
 		processShader = edgeShader;
 	}
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_5))
+	if (Window::GetKeyboard()->KeyDown(KEYBOARD_O))
 	{
 		processShader = blurryShader;
 	}
 #pragma endregion
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_1))
+	if (Window::GetKeyboard()->KeyDown(KEYBOARD_Z))
 	{
 		sceneNum = 0;
 	}
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_2))
+	if (Window::GetKeyboard()->KeyDown(KEYBOARD_X))
 	{
 		sceneNum = 1;
 		camera->SetPosition(Vector3(0, 500, 0));
@@ -902,7 +932,40 @@ inline void Renderer::KeyBoardControl()
 	{
 		showBoundingVolume = !showBoundingVolume;
 	}
-	
+	for (int i = 0; i < 7; i++)
+	{
+		if (Window::GetKeyboard()->KeyDown((KeyboardKeys)((int)KEYBOARD_1 + i)))
+		{
+			sceneNum = 0;
+			camera->SetPosition(cameraPostions[i].position);
+			camera->SetPitch(cameraPostions[i].pitch);
+			camera->SetYaw(cameraPostions[i].yaw);
+		}
+	}
+
+	if (Window::GetKeyboard()->KeyDown((KEYBOARD_8)))
+	{
+		sceneNum = 1;
+		camera->SetPosition(cameraPostions[10].position);
+		camera->SetPitch(cameraPostions[10].pitch);
+		camera->SetYaw(cameraPostions[10].yaw);
+	}
+
+	if (Window::GetKeyboard()->KeyDown((KEYBOARD_9)))
+	{
+		sceneNum = 1;
+		camera->SetPosition(cameraPostions[11].position);
+		camera->SetPitch(cameraPostions[11].pitch);
+		camera->SetYaw(cameraPostions[11].yaw);
+	}
+
+	if (Window::GetKeyboard()->KeyDown((KEYBOARD_0)))
+	{
+		sceneNum = 1;
+		camera->SetPosition(cameraPostions[12].position);
+		camera->SetPitch(cameraPostions[12].pitch);
+		camera->SetYaw(cameraPostions[12].yaw);
+	}
 }
 
 inline void Renderer::LoadAutoCamera()

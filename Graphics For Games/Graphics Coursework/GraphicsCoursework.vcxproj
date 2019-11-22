@@ -72,12 +72,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ParticleEmitter.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="TextMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="TextMesh.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="fragment.glsl" />
+    <None Include="geometry.glsl" />
+    <None Include="vertex.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

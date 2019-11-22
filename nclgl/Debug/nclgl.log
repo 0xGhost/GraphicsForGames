@@ -4,15 +4,22 @@
   BoundingVolume.cpp
   Camera.cpp
   Frustum.cpp
+  GameTimer.cpp
   HeightMap.cpp
+  Keyboard.cpp
+  Light.cpp
+  Matrix4.cpp
   MD5Anim.cpp
   MD5FileData.cpp
   MD5Mesh.cpp
   MD5Node.cpp
-  Matrix4.cpp
   Mesh.cpp
+  Mouse.cpp
   OBJMesh.cpp
   OGLRenderer.cpp
+  Plane.cpp
+  Generating Code...
+  Compiling...
   Quaternion.cpp
   SceneNode.cpp
   Shader.cpp
