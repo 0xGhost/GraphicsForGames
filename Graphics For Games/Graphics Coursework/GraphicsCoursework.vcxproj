@@ -82,9 +82,9 @@
     <ClInclude Include="TextMesh.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="fragment.glsl" />
-    <None Include="geometry.glsl" />
-    <None Include="vertex.glsl" />
+    <None Include="fireFragment.glsl" />
+    <None Include="fireGeometry.glsl" />
+    <None Include="fireVertex.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

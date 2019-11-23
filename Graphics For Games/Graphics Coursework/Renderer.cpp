@@ -18,9 +18,9 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent), window(&parent), showB
 	}
 	basicFont = new Font(SOIL_load_OGL_texture(TEXTUREDIR"tahoma.tga", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_COMPRESS_TO_DXT), 16, 16);
 
-	particleEmitterShader = new Shader("vertex.glsl",
-		"fragment.glsl",
-		"geometry.glsl");
+	particleEmitterShader = new Shader("fireVertex.glsl",
+		"fireFragment.glsl",
+		"fireGeometry.glsl");
 
 	if (!particleEmitterShader->LinkProgram()) return;
 	
@@ -765,6 +765,7 @@ void Renderer::DrawCombinedScene() {
 	glActiveTexture(GL_TEXTURE0);
 
 	viewMatrix = camera->BuildViewMatrix();
+	modelMatrix.ToIdentity();
 	UpdateShaderMatrices();
 
 	
@@ -844,14 +845,19 @@ inline void Renderer::DrawEmitter()
 {
 	SetCurrentShader(particleEmitterShader);
 	glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "diffuseTex"), 0);
+	Matrix4 modelMatrixTemp = Matrix4::Translation(Vector3(6000, 1000, 6000)) * Matrix4::Scale(Vector3(2, 2, 2));
 	SetShaderParticleSize(emitter->GetParticleSize());
-	emitter->SetParticleSize(8.0f);
+	
+	emitter->SetParticleRate(200.0f);
+	emitter->SetParticleSize(16.0f);
 	emitter->SetParticleVariance(1.0f);
 	emitter->SetLaunchParticles(16.0f);
-	emitter->SetParticleLifetime(2000.0f);
-	emitter->SetParticleSpeed(0.1f);
+	emitter->SetParticleLifetime(3000.0f);
+	emitter->SetParticleSpeed(0.05f);
+	emitter->SetLaunchParticles(200);
 	UpdateShaderMatrices();
-
+	glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram()
+		, "modelMatrix"), 1, false, *&modelMatrixTemp.values);
 	emitter->Draw();
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

@@ -40,13 +40,13 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="fragment.glsl">
+    <None Include="fireFragment.glsl">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="geometry.glsl">
+    <None Include="fireGeometry.glsl">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="vertex.glsl">
+    <None Include="fireVertex.glsl">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

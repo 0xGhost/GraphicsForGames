@@ -79,6 +79,8 @@ void ParticleEmitter::Update(float msec)	{
 		//We're keeping the particles 'life' in the alpha channel of its colour. 
 		//This means it'll also fade out as it loses energy. Kinda cool?
 		p->colour.w -= (msec / particleLifetime);
+		p->colour.x -= (msec / particleLifetime) * (msec / particleLifetime);
+		
 
 		//If this particle has ran out of life, remove it from the 'active' list,
 		//and put it on the 'free' list for reuse later.
@@ -90,8 +92,9 @@ void ParticleEmitter::Update(float msec)	{
 			//Otherwise, this particle must be still 'alive'. Update its
 			//position by multiplying its normalised direction by the
 			//particle speed, and adding the result to the position. Easy!
-
-			p->position += p->direction*(msec*particleSpeed);
+			
+			p->position += p->direction * (msec * particleSpeed * p->colour.w * p->colour.w) + Vector3(RAND() / 100.0f, 0.03f, RAND() / 100.0f) * msec * (1 - (p->colour.w * p->colour.w));
+			//p->position += p->direction*(msec*particleSpeed);
 
 
 			++i;	//Only update our iterator value here.
@@ -127,7 +130,8 @@ Particle* ParticleEmitter::GetFreeParticle()	{
 	//Now we have to reset its values - if it was popped off the
 	//free list, it'll still have the values of its 'previous life'
 
-	p->colour		= Vector4(RAND(),RAND(),RAND(),1.0);
+	//p->colour = Vector4(RAND(), RAND(), RAND(), 1.0);
+	p->colour		= Vector4(0.2,1.0,0.2,1.0);
 	p->direction	= initialDirection;
 	p->direction.x += ((RAND()-RAND()) * particleVariance);
 	p->direction.y += ((RAND()-RAND()) * particleVariance);
