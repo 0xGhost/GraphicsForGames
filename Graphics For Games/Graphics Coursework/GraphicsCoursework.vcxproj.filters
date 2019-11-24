@@ -27,6 +27,9 @@
     <ClCompile Include="ParticleEmitter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BunnyNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Renderer.h">
@@ -38,6 +41,9 @@
     <ClInclude Include="ParticleEmitter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BunnyNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="fireFragment.glsl">
@@ -47,6 +53,15 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="fireVertex.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="bunnyFragment.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="bunnyGeometry.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="bunnyVertex.glsl">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

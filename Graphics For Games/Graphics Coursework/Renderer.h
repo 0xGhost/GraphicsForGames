@@ -8,6 +8,7 @@
 #include "../../nclgl/MD5Mesh.h"
 #include "../../nclgl/MD5Node.h"
 #include "textmesh.h"
+#include "BunnyNode.h"
 #include "ParticleEmitter.h"
 #include <algorithm>
 
@@ -76,14 +77,18 @@ protected:
 	Shader* particleEmitterShader;
 
 	SceneNode* heightMapNode;
+	SceneNode* quadsNode;
+	SceneNode* quadNodes[5];
 	SceneNode* hellKnightNode;
 	SceneNode* waterNode;
+	BunnyNode* bunnyNode;
 
 	SceneNode* pyramidNode;
 	SceneNode* oceanNode;
 
 	ParticleEmitter* emitter;
 	OBJMesh* pyramidMesh;
+	OBJMesh* bunny;
 	Mesh* oceanMesh;
 	size_t numberOfLight;
 	Light** lights; // Array of lighting data

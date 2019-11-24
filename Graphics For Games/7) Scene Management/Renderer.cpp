@@ -22,7 +22,7 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent)
 		s->SetTransform(Matrix4::Translation(Vector3(0, 100.0f, -300.0f + 100.0f + 100 * i)));
 		s->SetModelScale(Vector3(100.0f, 100.0f, 100.0f));
 		//s->SetBoundingRadius(100.0f);
-		s->SetBoundingVolume(new BoundingSphere(s->GetWorldTransform(), s->GetModelScale(), 100.0f));
+		//s->SetBoundingVolume(new BoundingSphere(s->GetWorldTransform(), s->GetModelScale(), 100.0f));
 		s->SetMesh(quad);
 		root->AddChild(s);
 	}

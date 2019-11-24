@@ -1,3 +1,5 @@
+
+
 #include "Renderer.h"
 #include "../../nclgl/BoundingSphere.h"
 #include "../../nclgl/AABoundingBox.h"
@@ -11,11 +13,16 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent), window(&parent), showB
 
 	skyBoxQuad = Mesh::GenerateQuad();
 	quad = Mesh::GenerateQuad();
+
+	bunny = new OBJMesh();
+	//if (!bunny->LoadOBJMesh(MESHDIR "ico.obj")) return;
+	if (!bunny->LoadOBJMesh(MESHDIR "bunny.obj")) return;
+	//bunny->GenerateNormals();
+	//bunny->GenerateTangents();
+
 	sphere = new OBJMesh();
-	if (!sphere->LoadOBJMesh(MESHDIR "sphere.obj"))
-	{
-		return;
-	}
+	if (!sphere->LoadOBJMesh(MESHDIR "sphere.obj"))	return;
+
 	basicFont = new Font(SOIL_load_OGL_texture(TEXTUREDIR"tahoma.tga", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_COMPRESS_TO_DXT), 16, 16);
 
 	particleEmitterShader = new Shader("fireVertex.glsl",
@@ -92,10 +99,19 @@ void Renderer::UpdateScene(float msec)
 		AutoCamera(msec);
 	viewMatrix = camera->BuildViewMatrix();
 	frameFrustum.FromMatrix(projMatrix * viewMatrix);
-	root[sceneNum]->Update(msec);
+	
+	
 	waterRotate = msec / 1000.0f;
 	waterNode->SetTextureMatrix(waterNode->GetTextureMatrix() * Matrix4::Rotation(waterRotate, Vector3(0.0f, 0.0f, 1.0f)));
+	quadsNode->SetTransform(quadsNode->GetTransform() * Matrix4::Rotation(waterRotate * 10.0f, Vector3(0.0f, 1.0f, 0.0f)));
+	for (int i = 0; i < 5; i++)
+	{
+		quadNodes[i]->SetTransform(quadNodes[i]->GetTransform() * Matrix4::Rotation(waterRotate * 10.0f, Vector3(0.0f, 0.0f, 1.0f)));
+		quadNodes[i]->GetBoundingVolume()->GenerateBoundingVolume(*quadNodes[i]->GetMesh(), quadNodes[i]->GetWorldTransform() * Matrix4::Scale(quadNodes[i]->GetModelScale()));
+	}
+	
 	emitter->Update(msec);
+	root[sceneNum]->Update(msec);
 }
 
 void Renderer::RenderScene()
@@ -227,7 +243,6 @@ void Renderer::DrawNode(SceneNode* n)
 		Matrix4 temp = modelMatrix;
 		modelMatrix = n->GetWorldTransform() * Matrix4::Scale(n->GetModelScale());
 		textureMatrix = n->GetTextureMatrix();	
-			
 		UpdateShaderMatrices();
 		
 		glUniform1f(glGetUniformLocation(currentShader->GetProgram(), "time"), GetMS());
@@ -284,28 +299,47 @@ inline void Renderer::InitScene0()
 	if (!textureShader->LinkProgram()) return;
 	
 	quad->SetTexture(SOIL_load_OGL_texture(TEXTUREDIR"brick.tga", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0));
-	if (!quad->GetTexture()) return;
 	quad->SetBumpMap(SOIL_load_OGL_texture(TEXTUREDIR"brickDOT3.tga", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0));
+	if (!quad->GetTexture() || !quad->GetBumpMap()) return;
+
+
+	bunny->SetTexture(SOIL_load_OGL_texture(TEXTUREDIR"brick.tga", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0));
+	bunny->SetBumpMap(SOIL_load_OGL_texture(TEXTUREDIR"brickDOT3.tga", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0));
+	if (!bunny->GetTexture() || !bunny->GetBumpMap()) return;
 
 	root[0] = new SceneNode();
 	//root->SetBoundingVolume(new )
-	
+	quadsNode = new SceneNode();
+	quadsNode->SetTransform(Matrix4::Translation(Vector3(1000, 1500.0f, 3500.0f)));
+	root[0]->AddChild(quadsNode);
+
 	for (int i = 0; i < 5; ++i) {
-		SceneNode* s = new SceneNode();
-		s->SetColour(Vector4(1.0f, 1.0f, 1.0f, 0.5f));
-		s->SetTransform(Matrix4::Translation(Vector3(1000, 1500.0f, 2000.0f + 100.0f + 500 * i))
+		quadNodes[i] = new SceneNode();
+		quadNodes[i]->SetColour(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+		quadNodes[i]->SetTransform(Matrix4::Translation(Vector3(0, 0, -1000.0f + 500 * i))
 			* Matrix4::Rotation(45, Vector3(1.0f, 0.0f, 0.0f)));
-		s->SetModelScale(Vector3(100.0f, 100.0f, 100.0f));
-		s->SetMesh(quad);
-		s->SetShader(sceneShader);
-		s->SetBoundingVolume(new AABoundingBox(s->GetWorldTransform(), s->GetModelScale(), quad));
+		quadNodes[i]->SetModelScale(Vector3(100.0f, 100.0f, 100.0f));
+		quadNodes[i]->SetMesh(quad);
+		quadNodes[i]->SetShader(sceneShader);
+		quadNodes[i]->SetBoundingVolume(new AABoundingBox(quadNodes[i]->GetWorldTransform(), quadNodes[i]->GetModelScale(), quad));
 		//s->SetBoundingVolume(new BoundingSphere(s->GetWorldTransform(), s->GetModelScale(), quad));
-		root[0]->AddChild(s);
+		quadsNode->AddChild(quadNodes[i]);
 	}
+	//bunny
+	SceneNode* b = new SceneNode();
+	b->SetColour(Vector4(1, 1, 1, 1));
+	b->SetTransform(Matrix4::Translation(Vector3(6000.0f, 1000.0f, 6000.0f)));
+	b->SetModelScale(Vector3(200.0f, 200.0f, 200.0f));
+	b->SetMesh(bunny);
+	Shader* bunnyShader = new Shader("bunnyVertex.glsl", "bunnyFragment.glsl", "bunnyGeometry.glsl");
+	if (!bunnyShader->LinkProgram()) return;
+	b->SetShader(bunnyShader);
+	b->SetBoundingVolume(new AABoundingBox(b->GetWorldTransform(), b->GetModelScale(), bunny));
+	root[0]->AddChild(b);
 
 	// portal
 	SceneNode* p = new SceneNode();
-	p->SetColour(Vector4(1.0f, 1.0f, 1.0f, 0.5f));
+	p->SetColour(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 	p->SetTransform(Matrix4::Translation(Vector3(4000.0f, 1000.0f, 4000.0f)));
 	p->SetModelScale(Vector3(200.0f, 200.0f, 200.0f));
 	p->SetMesh(sphere);
@@ -359,7 +393,7 @@ inline SceneNode* Renderer::LoadHeightMap()
 	SceneNode* hm = new SceneNode();
 	hm->SetShader(heightMapShader);
 	hm->SetMesh(heightMap);
-	hm->SetColour(Vector4(1.0f, 1.0f, 1.0f, 0.5f));
+	hm->SetColour(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 	hm->SetTransform(Matrix4::Translation(Vector3(0, 0, 0)));
 	hm->SetModelScale(Vector3(1.0f, 1.0f, 1.0f));
 	hm->SetBoundingVolume(new AABoundingBox(hm->GetWorldTransform(), hm->GetModelScale(), heightMap));

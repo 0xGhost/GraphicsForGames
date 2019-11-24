@@ -1,9 +1,9 @@
 ﻿  Renderer.cpp
 C:\Users\xxlya\source\repos\0xGhost\GraphicsForGames\nclgl\Keyboard.h(1,1): warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
-C:\Users\xxlya\source\repos\0xGhost\GraphicsForGames\Graphics For Games\Graphics Coursework\Renderer.cpp(60,6): warning C4101: 'a': unreferenced local variable
-C:\Users\xxlya\source\repos\0xGhost\GraphicsForGames\Graphics For Games\Graphics Coursework\Renderer.cpp(86,16): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\xxlya\source\repos\0xGhost\GraphicsForGames\Graphics For Games\Graphics Coursework\Renderer.cpp(485,88): warning C4305: 'argument': truncation from 'double' to 'const float'
-C:\Users\xxlya\source\repos\0xGhost\GraphicsForGames\Graphics For Games\Graphics Coursework\Renderer.cpp(854,30): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\xxlya\source\repos\0xGhost\GraphicsForGames\Graphics For Games\Graphics Coursework\Renderer.cpp(1006,29): warning C4018: '>=': signed/unsigned mismatch
-C:\Users\xxlya\source\repos\0xGhost\GraphicsForGames\Graphics For Games\Graphics Coursework\Renderer.cpp(1017,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\xxlya\source\repos\0xGhost\GraphicsForGames\Graphics For Games\Graphics Coursework\Renderer.cpp(67,6): warning C4101: 'a': unreferenced local variable
+C:\Users\xxlya\source\repos\0xGhost\GraphicsForGames\Graphics For Games\Graphics Coursework\Renderer.cpp(93,16): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\xxlya\source\repos\0xGhost\GraphicsForGames\Graphics For Games\Graphics Coursework\Renderer.cpp(519,88): warning C4305: 'argument': truncation from 'double' to 'const float'
+C:\Users\xxlya\source\repos\0xGhost\GraphicsForGames\Graphics For Games\Graphics Coursework\Renderer.cpp(888,30): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\xxlya\source\repos\0xGhost\GraphicsForGames\Graphics For Games\Graphics Coursework\Renderer.cpp(1040,29): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\xxlya\source\repos\0xGhost\GraphicsForGames\Graphics For Games\Graphics Coursework\Renderer.cpp(1051,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   GraphicsCoursework.vcxproj -> C:\Users\xxlya\Source\Repos\0xGhost\GraphicsForGames\Graphics For Games\Debug\GraphicsCoursework1.exe

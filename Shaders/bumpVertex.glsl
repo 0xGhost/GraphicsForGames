@@ -3,6 +3,7 @@ uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projMatrix;
 uniform mat4 textureMatrix;
+uniform vec4 nodeColour;
 
 in vec3 position;
 in vec4 colour;
@@ -22,7 +23,7 @@ out Vertex
 
 void main(void) 
 {
-	OUT.colour = colour;
+	OUT.colour = nodeColour;
 	OUT.texCoord = (textureMatrix * vec4(texCoord, 0.0, 1.0)).xy;
 
 	mat3 normalMatrix = transpose(inverse(mat3(modelMatrix)));

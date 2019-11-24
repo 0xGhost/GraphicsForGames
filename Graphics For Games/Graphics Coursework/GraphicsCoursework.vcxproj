@@ -71,17 +71,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BunnyNode.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ParticleEmitter.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="TextMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BunnyNode.h" />
     <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="TextMesh.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="bunnyFragment.glsl" />
+    <None Include="bunnyGeometry.glsl" />
+    <None Include="bunnyVertex.glsl" />
     <None Include="fireFragment.glsl" />
     <None Include="fireGeometry.glsl" />
     <None Include="fireVertex.glsl" />

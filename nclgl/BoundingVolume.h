@@ -14,6 +14,7 @@ public:
 	virtual void Draw() const = 0;
 	virtual bool IsInPlane(Plane p) const = 0;
 	virtual void ExpendVolume(BoundingVolume* childBoundingVolume) = 0;
+	virtual void BoundVolume(BoundingVolume* childBoundingVolume) = 0;
 	virtual Vector3 GetMaxDistancePointFromPosition(Vector3 position) const = 0;
 	virtual void GenerateBoundingVolume(const Mesh& m, Matrix4 modelMatrix) = 0;
 	virtual void Update(Matrix4 newTrans) { transform = newTrans; } // without scale

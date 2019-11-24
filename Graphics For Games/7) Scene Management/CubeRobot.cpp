@@ -37,14 +37,14 @@ CubeRobot::CubeRobot(void)
 	rightLeg->SetModelScale(Vector3(3, -17.5, 3));
 	rightLeg->SetTransform(Matrix4::Translation(Vector3(8, 0, 0)));
 	body->AddChild(rightLeg);
-
+	/*
 	body->SetBoundingVolume(new BoundingSphere(body->GetWorldTransform(), body->GetModelScale(), 15.0f));
 	head->SetBoundingVolume(new BoundingSphere(head->GetWorldTransform(), head->GetModelScale(), 5.0f));
 	leftArm->SetBoundingVolume(new BoundingSphere(leftArm->GetWorldTransform(), leftArm->GetModelScale(), 18.0f));
 	rightArm->SetBoundingVolume(new BoundingSphere(rightArm->GetWorldTransform(), rightArm->GetModelScale(), 18.0f));
 	leftLeg->SetBoundingVolume(new BoundingSphere(leftLeg->GetWorldTransform(), leftLeg->GetModelScale(), 18.0f));
 	rightLeg->SetBoundingVolume(new BoundingSphere(rightLeg->GetWorldTransform(), rightLeg->GetModelScale(), 18.0f));
-
+	*/
 	//body->SetBoundingRadius(15.0f);
 	//head->SetBoundingRadius(5.0f);
 
