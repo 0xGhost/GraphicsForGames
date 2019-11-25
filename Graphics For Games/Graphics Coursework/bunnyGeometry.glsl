@@ -5,7 +5,7 @@ uniform mat4 modelMatrix;
 uniform mat4 projMatrix;
 uniform mat4 viewMatrix;
 
-const float MAGNITUDE = 40;
+const float MAGNITUDE = 80;
 
 in Vertex
 {
@@ -27,7 +27,8 @@ void GenerateLine(int index)
 {
 	gl_Position = gl_in[index].gl_Position;
 	EmitVertex();
-	gl_Position.xyz = gl_in[index].gl_Position.xyz + normalize(projMatrix * vec4(IN[index].normal, 1.0)).xyz * MAGNITUDE;
+	gl_Position = gl_in[index].gl_Position;
+	gl_Position.xy = gl_in[index].gl_Position.xy + normalize(projMatrix * vec4(IN[index].normal, 1.0)).xy * MAGNITUDE;
 	EmitVertex();
 	EndPrimitive();
 }

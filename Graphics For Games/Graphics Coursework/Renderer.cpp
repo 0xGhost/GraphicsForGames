@@ -326,7 +326,7 @@ inline void Renderer::InitScene0()
 		quadsNode->AddChild(quadNodes[i]);
 	}
 	//bunny
-	SceneNode* b = new SceneNode();
+	BunnyNode* b = new BunnyNode();
 	b->SetColour(Vector4(1, 1, 1, 1));
 	b->SetTransform(Matrix4::Translation(Vector3(6000.0f, 1000.0f, 6000.0f)));
 	b->SetModelScale(Vector3(200.0f, 200.0f, 200.0f));
